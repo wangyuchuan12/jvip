@@ -20,12 +20,12 @@ public class SpringBootConfig implements EnvironmentPostProcessor {
         try {
             InputStream is = null;
             try {
-                is = new FileInputStream("/etc/nk/file-server/application.properties");
+                is = new FileInputStream("application.properties");
             }catch (Exception e){
                 try {
                     is = new FileInputStream(new ClassPathResource("application.properties").getFile());
                 }catch (Exception e2){
-                    is =  new FileInputStream("c:/etc/nk/file-server/application.properties");
+                    is =  new FileInputStream("c:/etc/nk/jvip/application.properties");
                 }
             }
             Properties properties = new Properties();

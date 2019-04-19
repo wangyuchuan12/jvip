@@ -13,8 +13,7 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = "UTF-8"
 
 war {
-    baseName = 'smartremote'
-    version =  '0.1.0'
+    baseName = 'jvip'
 }
 
 gretty {

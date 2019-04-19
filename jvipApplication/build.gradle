@@ -38,12 +38,7 @@ repositories {
 jar {
     manifest {
         attributes "Manifest-Version": 1.0,
-                'Main-Class': 'com.message.client.Application'
-    }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    copy {
-        from "src/main/resources/database.conf"
-        into "build/libs/"
+                'Main-Class': 'com.Application'
     }
 }
 
