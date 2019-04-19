@@ -1,0 +1,23 @@
+
+<div id="baseContent" onclick="alert();">
+    <div style="display:none;" class="baseContentLoading">
+        <div class="baseContentLoadingImg" ></div>
+    </div>
+    
+</div>
+
+<div id="dialogContent">
+        
+</div>
+
+<div id="updateProgressBar" style="position: absolute;width:100%;height:100%;z-index: 100000;text-align: center;background:rgba(0,0,0,0.9);top:0px;left:0px;display:none;">
+    <div id="updateProgressBarContent" class="easyui-progressbar" style="width:90%;top:40%;position: relative;margin: 0 auto;background: rgba(28,24,23,1);"></div>
+    <div  style="width:90%;top:50%;position: relative;margin: 0 auto;color: white;font-weight: bolder;font-size: 20px;">程序更新中，请勿关闭</div>
+</div>
+<script type="text/javascript">
+    var base = loader.getBase();
+    base.init({
+        render:function(){
+        }
+    });
+</script>

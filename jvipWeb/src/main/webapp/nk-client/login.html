@@ -1,0 +1,67 @@
+﻿<div>
+	<div style="text-align:center;margin-top:20px;">
+		<img src="logo.svg" style="width:100px;height:100px;display:inline-block;"/>
+		<div style="display:inline-block;font-size:30px;font-weight:bolder;vertical-align:top;padding-top:20px;">诺客智能客服</div>
+	</div>
+	<form id="ff" method="post" style="margin-top:50px;">
+			<div style="text-align:center;padding:5px">
+				<input id="username" class="easyui-textbox" data-options="iconCls:'icon-man',iconWidth:28,prompt:'用户名'" data-options="editable:false,panelHeight:'auto'" style="width:250px;text-align:center;height:40px;multiline:true" name="username">
+			</div>
+
+			<div style="text-align:center;padding:5px">
+				<input id="password" class="easyui-passwordbox" data-options="iconWidth:28,prompt:'密码'" style="width:250px;height:40px;text-align:center;padding-top:50px;">
+			</div>
+
+			<div style="text-align:center;padding:5px;margin-top:50px;margin-bottom:20px;">
+				<div href="javascript:void(0)" class="easyui-linkbutton" onclick="login()" style="width:80%;background:rgba(30,144,253,1);color:white;font-weight:bolder;padding-top:10px;padding-bottom:10px;">登录</div>
+			</div>
+	</form>
+
+</div>
+
+<div id="failDialog"></div>
+
+<script>
+	$("#ff").bind('keyup', function(event) {
+        if (event.keyCode == "13") {
+            //回车执行查询
+           login();
+        }
+	});
+	
+	loader.getLogin().init({
+		render:function(){
+			var loginName = loader.getConfig().getLoginName();
+			var password = loader.getConfig().getPassword();
+			setTimeout(function(){
+				$("#username").textbox("setValue",loginName);
+				$("#password").textbox("setValue",password);
+				// if(loginName&&password){
+				// 	login();
+				// }
+			},500);
+		}
+	})
+	
+
+	function login(){
+		loader.getBase().startWaiting();
+		var username = $("#username").textbox('getValue');
+		var password = $("#password").textbox('getValue');
+
+		var callback = new Object();
+		callback.success = function(){
+			loader.getBase().stopWaiting();
+		}
+		callback.fail = function(){
+			$.messager.alert('登录失败','请查看用户名或者密码是否正确','warning');
+			loader.getBase().stopWaiting();
+		}
+		callback.timeout = function(){
+			$.messager.alert('网络超时','服务器正忙，请稍后再试','warning');
+			loader.getBase().stopWaiting();
+		}
+		loader.getLogin().doLogin(username,password,callback);
+		
+	}
+</script>

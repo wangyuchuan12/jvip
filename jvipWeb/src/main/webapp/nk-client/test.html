@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<script type="text/javascript" src="jquery-easyui-1.7.0/jquery.min.js"></script>
+
+
+	<head>	
+	</head>
+	<body>
+		<div class="easyui-panel" id="basePanel" style="width:500px;padding-left:20px;">
+		</div>
+
+		
+		<script>
+
+			$(document).ready(function () {
+				
+				$.ajax({
+					url:"http://localhost:9000/usercenter/login",
+					data:{
+						username:"nuoke",
+						identity:"admin888",
+						success:function(){
+						}
+					}
+				});
+			
+			});
+			
+		</script>
+	</body>
+</html>

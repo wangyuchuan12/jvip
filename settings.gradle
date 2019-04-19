@@ -1,0 +1,4 @@
+include ':common'
+include ':jvipApi'
+include ':jvipCommon'
+include ':jvipApplication'

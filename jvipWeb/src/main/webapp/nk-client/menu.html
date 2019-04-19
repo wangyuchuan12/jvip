@@ -1,0 +1,73 @@
+<div id="menuContent" class="menuContent">
+    <ul>
+        <!-- <li loadTarget="uploadProblem">
+            <img src="image/upload.png" style="left:5px;"></img>
+            <span>上报问题件</span>
+        </li>
+
+        <li loadTarget="searchProblem">
+                <img src="image/search.png"></img>
+                <span>问题件查询</span>
+        </li>
+
+        <li loadTarget="message">
+                <img src="image/message.png" style="left:3px;"></img>
+                <span>消息</span>
+                <div class="messageNum">1</div>
+        </li> -->
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+    loader.getMenu().init({
+        render:function(){
+            initMenus();
+        },
+        receiveReminder:function(type,num){
+            initMenus(type);
+        },
+        onClickMenu:function(type){
+            initMenus(type);
+        }
+    });
+    
+    function initMenus(type){
+        if(!type){
+            type = loader.getBase().getMode();
+        }
+        if(!type){
+            type="searchProblem"
+        }
+        var menus = loader.getMenu().getMenus();
+        $("#menuContent>ul").empty();
+        for(var i=0;i<menus.length;i++){
+            var menu = menus[i];
+            var liEl = $("<li></li>");
+            if(type==menu.loadTarget){
+                liEl = $("<li class='menuContentSelect'></li>");
+            }
+            liEl.attr("loadTarget",menu.loadTarget);
+            var imageEl = $("<img></img>");
+            imageEl.attr("src",menu.iconUrl);
+            imageEl.attr("style",menu.imgStyle);
+            var spanEl = $("<span></span>");
+            spanEl.html(menu.name);
+            var messageNum = $("<div class='messageNum'>"+menu.num+"</div>");
+            liEl.append(imageEl);
+            liEl.append(spanEl);
+            if(menu.num){
+                liEl.append(messageNum);
+            }
+            $("#menuContent>ul").append(liEl);
+        }
+
+        $("#menuContent>ul>li").click(function(){
+            var loadTarget = $(this).attr("loadTarget");
+            var menu = loader.getMenu();
+            menu.load(loadTarget);
+            loader.getMenu().onClickMenu(loadTarget);
+        });
+        
+    }
+</script>

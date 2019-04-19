@@ -1,0 +1,42 @@
+<script type="text/javascript" src="jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+<div id="userList" style="width:100%;height:100%;" >
+    <div style="width:100%;height:100%;">
+        <table  style="width:100%;height:100%;" class="" id="userGrid">
+            <thead>
+            <tr>
+                
+            </tr>
+            </thead>
+        </table>
+
+        <div id="pp2" style="background:#efefef;border:1px solid #ccc;"></div>
+    </div>
+
+</div>
+
+<script>
+    var columns = [[
+        {field:'name',title:'名称',width:'10%',align:'center',sortorder:'asc',sortable:"true"},
+        {field:'phonenumber',title:'手机号码',align:'center',width:'10%',sortable:false},
+        {field:'level',title:'深度',align:'center',width:'10%',sortable:true},
+        {field:'referee',title:'邀请人',width:'10%',align:'center',sortable:true},
+        {field:'grade',title:'等级',width:'10%',align:'center',sortable:true},
+        {field:'integral',title:'积分',width:'10%',align:'center',sortable:true},
+        {field:'invitationnum',title:'邀请人数',width:'10%',align:'center',sortable:true},
+        {field:'amount',title:'购买金额',width:'10%',align:'center',sortable:true}
+    ]]
+
+    showUserlistGrid(null);
+
+
+    function showUserlistGrid(){
+        $("#userGrid").datagrid({
+            rownumbers:true,
+            columns:columns,
+            onClickRow:function(index,row){
+
+            }
+        });
+    }
+
+</script>

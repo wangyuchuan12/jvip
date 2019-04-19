@@ -1,0 +1,47 @@
+<div class="headerContent">
+    <div style="width:80%;left:0px;height:50px;-webkit-app-region: drag;background:rgba(1,1,1,0);z-index:0;position:absolute;"></div>
+    <img src="logo.svg">
+    <span>诺客智能客服</span>
+    <div class="headerContentUser" style="position: fixed;z-index: 1;right:20px;top:20px;">
+        <a href="javascript:void(0)" id="mb" class="easyui-menubutton"
+    data-options="menu:'#mm',iconCls:'icon-man'" style="color:black;">你好，<span id="username"></span></a>
+        <div id="mm" style="width:150px;">
+            <div data-options="iconCls:'icon-black'" onclick="fullScreen()" id="fullScreen">全屏</div>
+            <div data-options="iconCls:'icon-black'" onclick="exitFullScreen()" id="exitFullScreen" style="display:none;">退出全屏</div>
+            <div data-options="iconCls:'icon-cancel'" onclick="exitSystem()">退出程序</div>
+            <div data-options="iconCls:'icon-back'" onclick="loginOut()">注销用户</div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    loader.getHeader().init({
+        render:function(){
+            $("#username").text(loader.getBasicInfo().getUsername());
+        }
+
+    });
+
+    function fullScreen(){
+        $("#fullScreen").css("display","none");
+        $("#exitFullScreen").css("display","block");
+        loader.getHeader().fullScreen();;
+    }
+
+    function exitFullScreen(){
+        $("#fullScreen").css("display","block");
+        $("#exitFullScreen").css("display","none");
+        loader.getHeader().exitFullScreen();;
+    }
+
+    function exitSystem(){
+        loader.getHeader().close();
+    }
+
+    function loginOut(){
+        loader.getHeader().doLoginout();
+    }
+    
+</script>
+

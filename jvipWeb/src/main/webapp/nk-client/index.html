@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html>
+	<script type="text/javascript" src="browser.min.js"></script>
+	<script type="text/javascript" src="util.js"></script>
+	<script type="text/javascript" src="basePageParser.js"></script>
+	<script type="text/javascript" src="attrPageParser.js"></script>
+	<script type="text/javascript" src="contentPageParser.js"></script>
+	<script type="text/javascript" src="basePage.js"></script>
+	<script type="text/javascript" src="jquery-easyui-1.7.0/jquery.min.js"></script>
+	<script type="text/javascript" src="loader.js"></script>
+	<script type="text/javascript" src="menu.js"></script>
+	<script type="text/javascript" src="base.js"></script>
+
+	<script type="text/javascript" src="config.js"></script>
+	<script type="text/javascript" src="eventHandler.js"></script>
+	<script type="text/javascript" src="content/orderList.js"></script>
+	<script type="text/javascript" src="content/taskList.js"></script>
+	<script type="text/javascript" src="content/userInfo.js"></script>
+	<script type="text/javascript" src="content/userList.js"></script>
+	<script type="text/javascript" src="login.js"></script>
+	<script type="text/javascript" src="basicInfo.js"></script>
+	<script type="text/javascript" src="header.js"></script>
+	<script type="text/javascript" src="socketSender.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="loading/style-6.css" />
+	<head>	
+	</head>
+	<body style="margin:0xp;">
+		<div id="base"></div>
+		<div id="content" style="width:110%;height:108%;text-align: top;">
+
+			<div id="header" style="width:99%;height:8%;background:rgba(44,61,79,1)"></div>
+			<div  style="display:inline-block;height:92%;width:100%;position:relative;">
+				<div style="display:inline-block;vertical-align: top;width:10%;height:100%;background:rgba(44,61,79,1);margin-top:0px;position:relative;" id="baseMenu">
+					<div id="baseMenuContent"></div>
+				</div>
+
+				<div style="display:inline-block;vertical-align: top;width:89%;height: 100%;margin-top:5px;position: relative;">
+					<div class="easyui-panel" id="basePanel" style="width:100%;height:100%;"></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="loginContent" style="width:100%;height:100%;"></div>
+
+		
+		<div class="loader" style="position: absolute;left:330px;display: none;">
+				<div>系</div>
+				<div>统</div>
+				<div>启</div>
+				<div>动</div>
+				<div>中</div>
+		</div>
+
+		<script type="text/babel">
+			$(document).ready(function () {
+				loader.loadBase();
+				loader.getBase().initFrame();
+				loader.getBase().setMode("login");
+				loader.loadLogin();
+				loader.getBase().startService({
+					success:function(){
+						$(".loader").css("display","none");
+					}
+				});
+				
+				/*setTimeout(function(){
+					loader.getBase().startUpdate();
+					loader.getBase().progressSchedule(50);
+				},3000);*/
+
+		
+				//alert("{{22222}}".replace(/{{/,"[["));
+				/*var cmd = require('node-cmd');
+				cmd.get('start.bat',
+				function(data){
+					console.log("cacul");
+				});*/
+
+				/*var path = "ws://localhost:9999/ws";
+				var socket = new WebSocket(path);
+				this.socket = socket;
+		
+				//收到消息
+				socket.onmessage = function (msg) {
+					alert(msg);
+				}
+		
+				//连接打开
+				socket.onopen = function (event) {
+					socket.send("你好啊，你是谁呢，哈哈哈哈哈");
+				}
+		
+				//连接断开
+				socket.onclose = function (event) {
+					alert("onclose")
+				}*/
+
+			});
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,123 @@
+html,body{
+    width:95%;
+    height: 95%;
+}
+.menuContent{
+    width:100%;
+    height: 100%;
+}
+.menuContent>ul{
+    padding-left: 0px;
+    text-align: center;
+    position: relative;
+}
+.menuContent>ul>li{
+    list-style-type:none;
+    color: white;
+    font-weight: bolder;
+    font-size: 15px;
+    text-align: center;
+    margin-top:20px;
+    cursor:pointer;
+    position: relative;
+    display: block;
+    width:100px;
+    margin: 0 auto;
+    padding-top:20px;
+    padding-bottom: 20px;
+    border-radius: 10px;
+}
+
+.menuContentSelect{
+    background:rgba(0,21,40,1);
+}
+
+.menuContentSelect>span{
+    /*color:black;*/
+}
+
+.menuContent>ul>li>img{
+    width:50px;
+    height: 50px;
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.menuContent>ul>li>span{
+    display: block;
+    padding-top:10px;
+}
+
+
+.messageNum{
+    background: red;
+    color: white;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    border-radius: 100px;
+    position: absolute;
+    line-height: 17px;
+    right: 25px;
+    top: 0px;
+}
+
+.headerContent{
+    padding-left: 40px;
+    padding-top:10px;
+    width:90%;
+}
+
+.headerContent>img{
+    width:40px;
+    height:40px;;
+}
+
+.headerContent>span{
+    font-size: 20px;
+    font-weight: bolder;
+    vertical-align: top;
+    padding-left: 20px;
+    color: white;
+}
+
+.headerContentUser{
+    float: right;
+    padding-right: 20px;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor:pointer;
+}
+
+.baseContentLoading{
+    width:100%;
+    height:100%;
+    position: fixed;
+    z-index: 100000000;
+}
+
+.baseContentLoadingImg{
+    width:100px;
+    height:100px;
+    background: url("image/wait.png");
+    background-size: 100% 100%;
+    left:50%;
+    top:40%;
+    margin-left:-50px;
+    position: relative;
+}
+
+.messageInfo{
+    width:100%;
+    height: 100%;;
+}
+
+.messageInfo>textarea{
+    width:100%;
+    height: 100%;
+    font-size: 20px;
+    font-weight: bolder;
+}

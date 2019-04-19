@@ -1,0 +1,50 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+compileJava.options.encoding = 'UTF-8'
+
+allprojects {
+    group 'com.chen'
+    //version '1.0-SNAPSHOT'
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    }
+}
+
+buildscript {
+    ext {
+        springBootVersion = '1.5.9.RELEASE'
+    }
+    repositories {
+        jcenter()
+        mavenLocal()
+        maven {url 'http://192.168.88.208/nexus/content/groups/public/'}
+        mavenCentral()
+    }
+    dependencies {
+        //classpath "io.spring.gradle:dependency-management-plugin:${springIOVersion}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {url 'http://192.168.88.208/nexus/content/groups/public/'}
+    mavenCentral()
+}
+
+configurations {
+    compile.exclude module: "commons-logging"
+    providedRuntime
+    providedCompile
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+dependencies {
+    compile project(':common');
+}
