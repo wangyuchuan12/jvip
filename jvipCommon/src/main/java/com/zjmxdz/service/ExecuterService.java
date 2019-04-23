@@ -3,11 +3,10 @@ package com.zjmxdz.service;
 import com.wyc.common.util.CommonUtil;
 import com.wyc.common.util.ExcelUtil;
 import com.zjmxdz.domain.*;
-import com.zjmxdz.domain.dto.TappImportTaskDto;
-import com.zjmxdz.domain.dto.TbasePurchaseConfigDto;
-import com.zjmxdz.domain.dto.TbaseUserinfoDto;
+import com.zjmxdz.domain.dto.*;
 import com.zjmxdz.domain.vo.ImportOrderData;
 import com.zjmxdz.domain.vo.ImportUserData;
+import com.zjmxdz.exception.UserInfoNullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +34,12 @@ public class ExecuterService {
     @Autowired
     private TappImportTaskService tappImportTaskService;
 
+    @Autowired
+    private TbasePurchaseConfigService tbasePurchaseConfigService;
+
+    @Autowired
+    private TbaseGradeConfigService tbaseGradeConfigService;
+
     public void importAllTask(){
         TappImportTaskDto tappImportTaskDto = new TappImportTaskDto();
         tappImportTaskDto.setStatus(0);
@@ -53,8 +58,22 @@ public class ExecuterService {
         }
     }
 
+    public void countGrade(TbaseUserinfo tbaseUserinfo){
+        TbaseGradeConfig tbaseGradeConfig = tbaseGradeConfigService.getMaxByIntegral(tbaseUserinfo.getIntegral());
+        if(CommonUtil.isNotEmpty(tbaseGradeConfig)){
+            Integer grade = tbaseUserinfo.getGrade();
+            tbaseUserinfo.setGrade(grade);
+            try {
+                tbaseUserinfoService.update(tbaseUserinfo);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
-    public void countReward(TappOrder tappOrder){
+    }
+
+
+    public void countReward(TappOrder tappOrder)throws UserInfoNullException{
 
         String account = tappOrder.getAccount();
         String refereeAccount = tappOrder.getRefereeAccount();
@@ -64,24 +83,83 @@ public class ExecuterService {
         userinfoDto.setUsername(account);
         TbaseUserinfo tbaseUserinfo = tbaseUserinfoService.findOne(userinfoDto);
 
+        if(CommonUtil.isEmpty(tbaseUserinfo)){
+            throw new UserInfoNullException();
+        }
+
         TbasePurchaseConfigDto tbasePurchaseConfigDto = new TbasePurchaseConfigDto();
 
         List<Integer> conditionGradeIn = new ArrayList<>();
         conditionGradeIn.add(0);
         conditionGradeIn.add(tbaseUserinfo.getGrade());
         tbasePurchaseConfigDto.setCONDITION_GRADE_IN(conditionGradeIn);
+        tbasePurchaseConfigDto.setCONDITION_LIMIT_AMOUNT(amount);
+        tbasePurchaseConfigDto.setCONDITION_MAX_AMOUNT(amount);
+
+        List<TbasePurchaseConfig> tbasePurchaseConfigs = tbasePurchaseConfigService.findAll(tbasePurchaseConfigDto);
+
+        for(TbasePurchaseConfig tbasePurchaseConfig:tbasePurchaseConfigs){
+
+            Integer level = tbasePurchaseConfig.getRewardLevel();
+
+            TappSubordinateDto tappSubordinateDto = new TappSubordinateDto();
+            tappSubordinateDto.setSubordinateUserid(tbaseUserinfo.getId());
+            tappSubordinateDto.setLevel(level);
+            List<TappSubordinate> tappSubordinates = tappSubordinateService.findAll(tappSubordinateDto);
+
+            for(TappSubordinate tappSubordinate:tappSubordinates){
+                TbaseUserinfo subordinateUserinfo = tbaseUserinfoService.findOne(tappSubordinate.getUserid());
+                Integer grade = tbaseUserinfo.getGrade();
+                Long integral = subordinateUserinfo.getIntegral();
+                Long rewardIntegral = tbasePurchaseConfig.getRewardIntegral();
+                if(CommonUtil.isEmpty(integral)){
+                    integral = 0L;
+                }
+
+                if(CommonUtil.isEmpty(rewardIntegral)){
+                    rewardIntegral = 0L;
+                }
+                subordinateUserinfo.setIntegral(integral+rewardIntegral);
+
+                BigDecimal bigDecimal = subordinateUserinfo.getAmount();
+                if(CommonUtil.isEmpty(bigDecimal)){
+                    bigDecimal = new BigDecimal(0);
+                }
+
+                if(CommonUtil.isNotEmpty(tbasePurchaseConfig.getRewardMoney())) {
+                    bigDecimal = bigDecimal.add(tbasePurchaseConfig.getRewardMoney());
+                }
+
+                Integer peas = subordinateUserinfo.getPeas();
+                if(CommonUtil.isEmpty(peas)){
+                    peas = 0;
+                }
+
+                if(CommonUtil.isNotEmpty(tbasePurchaseConfig.getRewardPeas())){
+                    peas = peas+tbasePurchaseConfig.getRewardPeas();
+                }
+
+                subordinateUserinfo.setAmount(bigDecimal);
+                subordinateUserinfo.setPeas(peas);
+
+                try {
+                    tbaseUserinfoService.update(subordinateUserinfo);
+                    countGrade(subordinateUserinfo);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
 
     }
 
     public void importTask(TappImportTask importTask)throws Exception{
         if(importTask.getType().intValue()==0){
-            String file = importTask.getFilePath();
-            FileInputStream fileInputStream = new FileInputStream(new File(file));
-            importUserData(fileInputStream);
+            importUserData(importTask);
         }else if(importTask.getType().intValue()==1){
-            String file = importTask.getFilePath();
-            FileInputStream fileInputStream = new FileInputStream(new File(file));
-            importOrderData(fileInputStream);
+            importOrderData(importTask);
         }
         importTask.setStatus(1);
         tappImportTaskService.update(importTask);
@@ -132,8 +210,10 @@ public class ExecuterService {
         }
     }
 
-    public void importUserData(InputStream inputStream)throws Exception{
-        List<ImportUserData> importUserDataList = ExcelUtil.read(ImportUserData.class,inputStream,0,10);
+    public void importUserData(TappImportTask importTask)throws Exception{
+        String file = importTask.getFilePath();
+        FileInputStream fileInputStream = new FileInputStream(new File(file));
+        List<ImportUserData> importUserDataList = ExcelUtil.read(ImportUserData.class,fileInputStream,0,10);
         for(ImportUserData importUserData:importUserDataList){
             TbaseUserinfoDto tbaseUserinfoDto = new TbaseUserinfoDto();
             tbaseUserinfoDto.setUsername(importUserData.getAccount());
@@ -149,6 +229,8 @@ public class ExecuterService {
                 tbaseUserinfo.setGrade(0);
                 tbaseUserinfo.setPeas(0);
                 tbaseUserinfo.setIsHierarchy(0);
+                tbaseUserinfo.setPassword("1234567");
+                tbaseUserinfo.setTaskId(importTask.getId());
                 tbaseUserinfoService.add(tbaseUserinfo);
             }
         }
@@ -157,16 +239,29 @@ public class ExecuterService {
     }
 
 
-    public void importOrderData(InputStream inputStream)throws Exception{
+    public void importOrderData(TappImportTask importTask)throws Exception{
+        String file = importTask.getFilePath();
+        FileInputStream fileInputStream = new FileInputStream(new File(file));
         List<ImportOrderData> importOrderDatas = new ArrayList<>();
-        importOrderDatas.addAll(ExcelUtil.read(ImportOrderData.class,inputStream,0,5));
+        importOrderDatas.addAll(ExcelUtil.read(ImportOrderData.class,fileInputStream,0,5));
         for(ImportOrderData importOrderData:importOrderDatas){
             TappOrder tappOrder = new TappOrder();
             tappOrder.setAmount(importOrderData.getAmount());
             tappOrder.setRefereeAccount(importOrderData.getReferencesId());
             tappOrder.setAccount(importOrderData.getAccount());
+            tappOrder.setStatus(0);
+            tappOrder.setTaskId(importTask.getId());
             tappOrderService.add(tappOrder);
-            countReward(tappOrder);
+            try {
+                countReward(tappOrder);
+                tappOrder.setStatus(1);
+            }catch (UserInfoNullException e){
+                tappOrder.setStatus(2);
+                tappOrder.setErrortype(0);
+                tappOrder.setRemarks("没有导入用户");
+            }
+
+            tappOrderService.update(tappOrder);
         }
     }
 }

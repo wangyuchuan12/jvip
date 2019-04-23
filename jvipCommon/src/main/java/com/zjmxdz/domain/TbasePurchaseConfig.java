@@ -29,11 +29,13 @@ public class TbasePurchaseConfig {
 
     //金额范围，最小额度
     @Column(name = "pconfig_condition_limitamount")
+    @Conditions(@Condition(properties="CONDITION_LIMIT_AMOUNT",type= Part.Type.LESS_THAN))
     private BigDecimal conditionLimitAmount;
 
 
     //金额范围，最大额度
     @Column(name = "pconfig_condition_maxamount")
+    @Conditions(@Condition(properties="CONDITION_MAX_AMOUNT",type= Part.Type.GREATER_THAN_EQUAL))
     private BigDecimal conditionMaxAmount;
 
     //奖励豆子
@@ -44,9 +46,9 @@ public class TbasePurchaseConfig {
     @Column(name = "pconfig_reward_money")
     private BigDecimal rewardMoney;
 
-    //影响的等级差
-    @Column(name = "pconfig_reward_diffgrade")
-    private Integer rewardDiffGrade;
+
+    @Column(name = "pconfig_reward_integral")
+    private Long rewardIntegral;
 
     //相差深度
     @Column(name = "pconfig_reward_level")

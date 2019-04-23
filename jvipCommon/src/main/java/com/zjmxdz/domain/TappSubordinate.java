@@ -1,4 +1,5 @@
 package com.zjmxdz.domain;
+import com.wyc.common.annotation.Condition;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,14 +19,17 @@ public class TappSubordinate {
 
     //当前用户
     @Column(name = "subordinate_userid")
+    @Condition
     private String userid;
 
     //下级
     @Column(name = "subordinate_suborinateuserid")
+    @Condition
     private String subordinateUserid;
 
     //深度
     @Column(name = "subordinate_level")
+    @Condition
     private Integer level;
 
     //邀请人数

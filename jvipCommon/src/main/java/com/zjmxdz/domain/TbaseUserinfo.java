@@ -56,6 +56,9 @@ public class TbaseUserinfo implements Serializable {
     //邀请人数
     @Column(name = "userinfo_invitationnum")
     private Integer invitationnum;
+    @Column(name = "userinfo_taskid")
+    @Condition
+    private String taskId;
     //有层级
     @Column(name = "userinfo_ishierarchy")
     @Condition

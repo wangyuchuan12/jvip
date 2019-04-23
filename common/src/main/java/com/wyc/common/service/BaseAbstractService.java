@@ -135,9 +135,8 @@ abstract public class BaseAbstractService<T> {
 
             return targets;
         }catch (Exception e){
-            e.printStackTrace();
+            throw new RuntimeException("发生错误");
         }
-        return new ArrayList<>();
     }
 
     public void add(T t){
@@ -384,8 +383,20 @@ abstract public class BaseAbstractService<T> {
            }
            sb.append(")");
            return sb.toString();
-        }
-        else{
+
+        } else if(CommonUtil.isEmpty(type)||type.equals(Part.Type.GREATER_THAN_EQUAL)){
+            String sql = condition.getColumn()+">='"+condition.getValue()+"'";
+            return  sql;
+        }else if(CommonUtil.isEmpty(type)||type.equals(Part.Type.LESS_THAN_EQUAL)){
+            String sql = condition.getColumn()+"<='"+condition.getValue()+"'";
+            return  sql;
+        }else if(CommonUtil.isEmpty(type)||type.equals(Part.Type.GREATER_THAN)){
+            String sql = condition.getColumn()+">'"+condition.getValue()+"'";
+            return  sql;
+        }else if(CommonUtil.isEmpty(type)||type.equals(Part.Type.LESS_THAN)){
+            String sql = condition.getColumn()+"<'"+condition.getValue()+"'";
+            return  sql;
+        }else{
             return "";
         }
     }

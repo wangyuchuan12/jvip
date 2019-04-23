@@ -8,8 +8,11 @@ import com.wyc.common.domain.Client;
 import com.wyc.common.service.ClientService;
 import com.wyc.common.util.CommonUtil;
 import com.wyc.common.util.ExcelUtil;
+import com.zjmxdz.dao.TappOrderDao;
 import com.zjmxdz.domain.TappImportTask;
+import com.zjmxdz.domain.TappOrder;
 import com.zjmxdz.domain.TbaseUserinfo;
+import com.zjmxdz.domain.dto.TappOrderDto;
 import com.zjmxdz.domain.dto.TbaseUserinfoDto;
 import com.zjmxdz.domain.vo.PurchaseRecordVo;
 import com.zjmxdz.domain.vo.SubordinateVo;
@@ -52,6 +55,9 @@ public class MainApi {
     @Autowired
     private TappImportTaskService tappImportTaskService;
 
+    @Autowired
+    private TappOrderService tappOrderService;
+
     @Value("${usercenter.token.expires}")
     private Long expires;
 
@@ -70,10 +76,69 @@ public class MainApi {
         }
     }
 
+
+    @RequestMapping("orderTaskInfo")
+    @ResponseBody
+    public Object orderTaskInfo(HttpServletRequest httpServletRequest){
+        String taskId = httpServletRequest.getParameter("taskId");
+        TappImportTask tappImportTask = tappImportTaskService.findOne(taskId);
+        if(CommonUtil.isEmpty(tappImportTask)){
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",false);
+            return data;
+        }else{
+            TappOrderDto tappOrderDto = new TappOrderDto();
+            tappOrderDto.setTaskId(taskId);
+            List<TappOrder> tappOrders = tappOrderService.findAll(tappOrderDto);
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",false);
+            data.put("data",tappOrders);
+            return data;
+        }
+    }
+
+    @RequestMapping("userTaskInfo")
+    @ResponseBody
+    public Object userTaskInfo(HttpServletRequest httpServletRequest){
+        String taskId = httpServletRequest.getParameter("taskId");
+        TappImportTask tappImportTask = tappImportTaskService.findOne(taskId);
+        if(CommonUtil.isEmpty(tappImportTask)){
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",false);
+            return data;
+        }else{
+            TbaseUserinfoDto tbaseUserinfoDto = new TbaseUserinfoDto();
+            tbaseUserinfoDto.setTaskId(taskId);
+            List<TbaseUserinfo> tbaseUserinfos = tbaseUserinfoService.findAll(tbaseUserinfoDto);
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",false);
+            data.put("data",tbaseUserinfos);
+            return data;
+        }
+    }
+
     @RequestMapping("taskList")
     @ResponseBody
     public Object tasks(HttpServletRequest httpServletRequest){
         return tappImportTaskService.findAllTasks();
+    }
+
+
+    @RequestMapping("countGrade")
+    @ResponseBody
+    public Object countGrade(HttpServletRequest httpServletRequest){
+        Client client = UserContext.get();
+        TbaseUserinfo userInfo = tbaseUserinfoService.findOne(client.getUserId());
+        if(CommonUtil.isNotEmpty(userInfo)) {
+            executerService.countGrade(userInfo);
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",true);
+            return data;
+        }else{
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",false);
+            return data;
+        }
     }
 
 
@@ -97,6 +162,41 @@ public class MainApi {
         response.put("success",true);
         response.put("data",subordinates);
         return response;
+    }
+
+    @RequestMapping("updatePassword")
+    @ResponseBody
+    public Object updatePassword(HttpServletRequest httpServletRequest){
+        String newPassword = httpServletRequest.getParameter("new_password");
+        String oldPassword = httpServletRequest.getParameter("old_password");
+        String account = httpServletRequest.getParameter("account");
+        TbaseUserinfoDto tbaseUserinfoDto = new TbaseUserinfoDto();
+        tbaseUserinfoDto.setUsername(account);
+        TbaseUserinfo tbaseUserinfo = tbaseUserinfoService.findOne(tbaseUserinfoDto);
+        if(CommonUtil.isEmpty(tbaseUserinfo)){
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",false);
+            return data;
+        }else{
+            String password = tbaseUserinfo.getPassword();
+            if(password.equals(oldPassword)){
+                tbaseUserinfo.setPassword(newPassword);
+                try {
+                    tbaseUserinfoService.update(tbaseUserinfo);
+                    Map<String,Object> data = new HashMap<>();
+                    data.put("success",true);
+                    return data;
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }else{
+
+            }
+
+            Map<String,Object> data = new HashMap<>();
+            data.put("success",false);
+            return data;
+        }
     }
 
     @RequestMapping("records")

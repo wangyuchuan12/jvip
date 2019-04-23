@@ -1,6 +1,7 @@
 package com.zjmxdz.domain;
 
 
+import com.wyc.common.annotation.Condition;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +28,20 @@ public class TappOrder {
 
     @Column(name = "order_account")
     private String account;
+
+    @Column(name = "order_status")
+    private Integer status;
+
+    @Column(name = "order_remarks")
+    private String remarks;
+
+    //错误类型 0表示没有导入用户
+    @Column(name = "order_errortype")
+    private Integer errortype;
+
+    @Column(name = "order_taskid")
+    @Condition
+    private String taskId;
 
     @Column(name = "update_at")
     private Timestamp updateAt;
