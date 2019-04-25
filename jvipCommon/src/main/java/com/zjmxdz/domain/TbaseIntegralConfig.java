@@ -27,8 +27,8 @@ public class TbaseIntegralConfig {
     @Column(name = "integralconfig_amount")
     private BigDecimal amount;
 
-    @Column(name = "integralconfig_level")
-    private Integer level;
+    @Column(name = "integralconfig_gradle")
+    private Integer gradle;
 
     @Column(name = "update_at")
     @UpdateAt

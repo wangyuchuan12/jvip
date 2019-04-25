@@ -31,6 +31,9 @@ public class TappOrder {
     @Column(name = "order_account")
     private String account;
 
+    @Column(name = "order_name")
+    private String name;
+
     @Column(name = "order_status")
     private Integer status;
 

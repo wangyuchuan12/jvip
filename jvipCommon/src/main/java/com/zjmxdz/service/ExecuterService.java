@@ -94,7 +94,7 @@ public class ExecuterService {
             throw new UserInfoNullException();
         }
 
-        BigDecimal userAmount =tbaseUserinfo.getAmount();
+        BigDecimal userAmount =tbaseUserinfo.getTotalAmount();
 
         if(CommonUtil.isEmpty(amount)){
             amount = new BigDecimal(0);
@@ -106,7 +106,7 @@ public class ExecuterService {
 
         userAmount = userAmount.add(amount);
 
-        tbaseUserinfo.setAmount(userAmount);
+        tbaseUserinfo.setTotalAmount(userAmount);
 
         try {
             tbaseUserinfoService.update(tbaseUserinfo);
@@ -311,12 +311,18 @@ public class ExecuterService {
         List<ImportOrderData> importOrderDatas = new ArrayList<>();
         importOrderDatas.addAll(ExcelUtil.read(ImportOrderData.class,fileInputStream,0,5));
         for(ImportOrderData importOrderData:importOrderDatas){
+            TbaseUserinfoDto tbaseUserinfoDto = new TbaseUserinfoDto();
+            tbaseUserinfoDto.setUsername(importOrderData.getAccount());
+            TbaseUserinfo tbaseUserinfo = tbaseUserinfoService.findOne(tbaseUserinfoDto);
             TappOrder tappOrder = new TappOrder();
+            if(CommonUtil.isNotEmpty(tbaseUserinfo)){
+                tappOrder.setName(tbaseUserinfo.getName());
+            }
             tappOrder.setAmount(importOrderData.getAmount());
             tappOrder.setRefereeAccount(importOrderData.getReferencesId());
             tappOrder.setAccount(importOrderData.getAccount());
             tappOrder.setStatus(0);
-            tappOrder.setTaskId(importTask.getId());
+            tappOrder.setTaskId(importTask.getId());;
             tappOrderService.add(tappOrder);
             try {
                 countReward(tappOrder);

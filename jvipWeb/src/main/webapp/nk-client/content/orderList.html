@@ -14,18 +14,17 @@
 </div>
 
 <script>
-    var columns = [[
-        {field:'name',title:'用户',width:'20%',align:'center',sortorder:'asc',sortable:"true"},
-        {field:'phonenumber',title:'金额',align:'center',width:'20%',sortable:false},
-        {field:'level',title:'获得积分',align:'center',width:'20%',sortable:true},
-        {field:'referee',title:'获得豆豆',width:'20%',align:'center',sortable:true},
-        {field:'grade',title:'交易时间',width:'20%',align:'center',sortable:true}
-    ]]
+
 
 
     showOrderGrid(null);
 
     function showOrderGrid(data){
+        var columns = [[
+            {field:'name',title:'用户',width:'33%',align:'center',sortorder:'asc',sortable:"true"},
+            {field:'account',title:'账号',align:'center',width:'33%',sortable:false},
+            {field:'amount',title:'金额',align:'center',width:'33%',sortable:false}
+        ]]
         $("#orderGrid").datagrid({
             data:data,
             rownumbers:true,
@@ -34,6 +33,16 @@
 
             }
         });
+    }
+
+    loadOrderData();
+
+    function loadOrderData(){
+        loader.getOrderList().orderList({
+            success:function(data){
+                showOrderGrid(data);
+            }
+        })
     }
 
 </script>

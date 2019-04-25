@@ -19,6 +19,19 @@ class OrderList extends BasePage{
         return "#orderList";
     }
 
+    orderList(callback){
+        var base = loader.getBase();
+        base.request({
+            url:"/api/orderList",
+            data:{
+
+            },
+            success:function(result){
+                callback.success(result);
+            }
+        });
+    }
+
 
     init(params){
         super.init(params);

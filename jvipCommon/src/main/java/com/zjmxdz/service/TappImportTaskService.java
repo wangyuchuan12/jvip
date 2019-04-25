@@ -3,6 +3,7 @@ package com.zjmxdz.service;
 import com.wyc.common.service.BaseAbstractService;
 import com.zjmxdz.dao.TappImportTaskDao;
 import com.zjmxdz.domain.TappImportTask;
+import com.zjmxdz.domain.vo.OrderVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +32,18 @@ public class TappImportTaskService extends BaseAbstractService<TappImportTask> {
         sb.append(" from tapp_import_task  order by create_at desc limit "+page+","+size);
         List<TappImportTask> tasks = findAll(TappImportTask.class,sb.toString());
         return tasks;
+    }
+
+    public List<OrderVo> findAllOrders(String account, int page, int size) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("select ");
+        sb.append("order_id as id,");
+        sb.append("order_name as name,");
+        sb.append("order_amount as amount,");
+        sb.append("order_account as account");
+        sb.append(" from tapp_order  where order_account='"+account+"'");
+        sb.append(" order by create_at desc limit "+page+","+size);
+        List<OrderVo> orders = findAll(OrderVo.class,sb.toString());
+        return orders;
     }
 }

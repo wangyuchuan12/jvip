@@ -1,5 +1,4 @@
 package com.zjmxdz.server.api;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.wyc.common.annotation.Auth;
@@ -8,7 +7,6 @@ import com.wyc.common.domain.Client;
 import com.wyc.common.service.ClientService;
 import com.wyc.common.util.CommonUtil;
 import com.wyc.common.util.ExcelUtil;
-import com.zjmxdz.dao.TappOrderDao;
 import com.zjmxdz.domain.TappImportTask;
 import com.zjmxdz.domain.TappOrder;
 import com.zjmxdz.domain.TbaseResource;
@@ -229,6 +227,14 @@ public class MainApi {
     @ResponseBody
     public Object tasks(HttpServletRequest httpServletRequest){
         return tappImportTaskService.findAllTasks(0,100);
+    }
+
+    @RequestMapping("orderList")
+    @ResponseBody
+    public Object orders(HttpServletRequest httpServletRequest){
+        Client client = UserContext.get();
+        TbaseUserinfo userInfo = tbaseUserinfoService.findOne(client.getUserId());
+        return tappImportTaskService.findAllOrders(userInfo.getUsername(),0,100);
     }
 
 
