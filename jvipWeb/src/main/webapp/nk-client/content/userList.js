@@ -24,4 +24,17 @@ class UserList extends BasePage{
         super.init(params);
         loader.getBase().setMode("userList");
     }
+
+    userList(callback){
+        var base = loader.getBase();
+        base.request({
+            url:"/api/subordinate",
+            data:{
+
+            },
+            success:function(result){
+                callback.success(result);
+            }
+        });
+    }
 }

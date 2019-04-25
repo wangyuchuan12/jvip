@@ -53,7 +53,7 @@ public class ExcelUtil {
                     }
                 }
 
-                Integer rowNum = sheet.getLastRowNum();
+                Integer rowNum = sheet.getLastRowNum()+1;
                 for (int i = start; i < rowNum; i++) {
                     T t = type.newInstance();
                     Row xssfRow = sheet.getRow(i);

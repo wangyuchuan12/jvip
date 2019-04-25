@@ -64,6 +64,7 @@ class Base
 	}
 
 	connSocket(){
+		return;
 		var eventHandler = loader.getEventHandler();
 		var path = loader.getConfig().socketPath();
 		var socket = new WebSocket(path);
@@ -86,6 +87,7 @@ class Base
 	}
 
 	connLocalSocket(){
+		return;
 		var eventHandler = loader.getEventHandler();
 		var path = "ws://"+loader.getConfig().localSocketHost()+":"+loader.getConfig().localSocketPort()+loader.getConfig().localSocketPath();
 		var localSocket = new WebSocket(path);
@@ -322,6 +324,39 @@ class Base
 				params.error();
 			}
 		});
+	}
+
+	uploadFile(callback){
+		this.request({
+			url: '/api/uploadFile',　　　　　　　　　　//上传地址
+			type: 'POST',
+			cache: false,
+			data: new FormData($('#uploadForm')[0]),　　　　　　　　　　　　　//表单数据
+			processData: false,
+			contentType: false,
+			success:function(resp){
+				if(resp.success){
+					callback.success(resp.data)
+				}else{
+					callback.fail();
+				}
+			},
+			error:function(error){
+				alert("error:"+JSON.stringify(error));
+			}
+		});
+	}
+
+	openUploadFile(callback){
+		var that = this;
+		$("#file_upload").val("");
+		$("#file_upload").off("change").on("change",function(){
+            that.uploadFile(callback);
+
+		});
+
+        $("#file_upload").click();
+
 	}
 
 	startWaiting(){

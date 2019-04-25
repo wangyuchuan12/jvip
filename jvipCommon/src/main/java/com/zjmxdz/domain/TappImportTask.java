@@ -1,5 +1,7 @@
 package com.zjmxdz.domain;
 import com.wyc.common.annotation.Condition;
+import com.wyc.common.annotation.CreateAt;
+import com.wyc.common.annotation.UpdateAt;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.Column;
@@ -38,8 +40,10 @@ public class TappImportTask {
     private Integer type;
 
     @Column(name = "update_at")
+    @UpdateAt
     private Timestamp updateAt;
 
     @Column(name = "create_at")
+    @CreateAt
     private Timestamp createAt;
 }

@@ -2,6 +2,8 @@ package com.zjmxdz.domain;
 
 import com.wyc.common.annotation.Condition;
 import com.wyc.common.annotation.Conditions;
+import com.wyc.common.annotation.CreateAt;
+import com.wyc.common.annotation.UpdateAt;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.repository.query.parser.Part;
@@ -30,6 +32,11 @@ public class TbaseUserinfo implements Serializable {
     //手机号码
     @Column(name = "userinfo_phonenumber")
     private String phonenumber;
+
+    //总共购买金额
+    @Column(name = "userinfo_totalamount")
+    private BigDecimal totalAmount;
+
     //姓名
     @Column(name = "userinfo_name")
     @Conditions({@Condition,@Condition(properties="EQUALS_NAME",type = Part.Type.SIMPLE_PROPERTY)})
@@ -65,7 +72,9 @@ public class TbaseUserinfo implements Serializable {
     private Integer isHierarchy;
 
     @Column(name = "update_at")
+    @UpdateAt
     private Timestamp updateAt;
     @Column(name = "create_at")
+    @CreateAt
     private Timestamp createAt;
 }

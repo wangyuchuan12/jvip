@@ -41,6 +41,23 @@ class Util{
     S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     }
+
+
+    timestampToDate(shijianchuo)
+    {
+        if(!shijianchuo){
+            return "";
+        }
+        function add0(m){return m<10?'0'+m:m }
+        var time = new Date(shijianchuo);
+        var y = time.getFullYear();
+        var m = time.getMonth()+1;
+        var d = time.getDate();
+        var h = time.getHours();
+        var mm = time.getMinutes();
+        var s = time.getSeconds();
+        return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    }
       
     guid() {
         return (

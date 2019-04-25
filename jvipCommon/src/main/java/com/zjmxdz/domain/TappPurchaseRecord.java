@@ -1,6 +1,8 @@
 package com.zjmxdz.domain;
 
 import com.wyc.common.annotation.Condition;
+import com.wyc.common.annotation.CreateAt;
+import com.wyc.common.annotation.UpdateAt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,7 +47,9 @@ public class TappPurchaseRecord {
     private Long peas;
 
     @Column(name = "update_at")
+    @UpdateAt
     private Timestamp updateAt;
     @Column(name = "create_at")
+    @CreateAt
     private Timestamp createAt;
 }

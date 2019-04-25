@@ -1,6 +1,5 @@
 package com.zjmxdz.domain;
 
-
 import com.wyc.common.annotation.CreateAt;
 import com.wyc.common.annotation.UpdateAt;
 import lombok.Data;
@@ -14,17 +13,17 @@ import java.sql.Timestamp;
 @Data
 @NoArgsConstructor
 @javax.persistence.Entity
-@Table(name="tbase_grade_config")
-public class TbaseGradeConfig {
+@Table(name="tbase_resource")
+public class TbaseResource {
     @Id
-    @Column(name = "levelconfig_id")
+    @Column(name = "resource_id")
     private String id;
 
-    @Column(name = "levelconfig_integral")
-    private Long integral;
+    @Column(name = "resource_filepath")
+    private String filePath;
 
-    @Column(name = "levelconfig_grade")
-    private Integer grade;
+    @Column(name = "resource_name")
+    private String name;
 
     @Column(name = "update_at")
     @UpdateAt

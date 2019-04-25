@@ -16,7 +16,7 @@ public class TappImportTaskService extends BaseAbstractService<TappImportTask> {
     }
 
 
-    public List<TappImportTask> findAllTasks(){
+    public List<TappImportTask> findAllTasks(int page,int size){
         StringBuffer sb = new StringBuffer();
         sb.append("select ");
         sb.append("task_id as id,");
@@ -28,7 +28,7 @@ public class TappImportTaskService extends BaseAbstractService<TappImportTask> {
         sb.append("task_username as username,");
         sb.append("task_type as type,");
         sb.append("create_at as createAt");
-        sb.append(" from tapp_import_task  order by create_at desc limit 0,100");
+        sb.append(" from tapp_import_task  order by create_at desc limit "+page+","+size);
         List<TappImportTask> tasks = findAll(TappImportTask.class,sb.toString());
         return tasks;
     }

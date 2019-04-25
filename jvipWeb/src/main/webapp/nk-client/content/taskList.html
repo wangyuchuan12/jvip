@@ -1,3 +1,201 @@
 <div id="taskList" style="width:100%;height:100%;" >
-    taskList
+    <table  style="width:100%;height:100%;" class="" id="taskGrid">
+        <thead>
+        <tr>
+
+        </tr>
+        </thead>
+    </table>
 </div>
+
+<script>
+
+
+    showTaskGrid();
+    function showTaskGrid(data){
+        var columns = [[
+            {field:'filename',title:'任务名称',width:'15%',align:'center',sortorder:'asc',sortable:"true"},
+            {field:'type',title:'任务类型',width:'15%',align:'center',sortorder:'asc',sortable:"true",formatter:function(type,record){
+                    if(type==0){
+                        return "员工导入";
+                    }else if(type==1){
+                        return "订单导入";
+                    }
+                }},
+            {field:'status',title:'任务状态',align:'center',width:'15%',sortable:false,formatter:function(state,record){
+                    if(state==0){
+                        return "<div style='color:blue'>未执行</div>";
+                    }else if(state==1){
+                        return "<div style='color:green'>已完成</div>";
+                    }else if(state==2){
+                        return "<div style='color:red'>执行失败</div>";
+                    }
+                }},
+            {field:'createAt',title:'创建时间',align:'center',width:'15%',sortable:true,formatter:new Util().timestampToDate},
+            {field:'startTime',title:'执行时间',width:'15%',align:'center',sortable:true,formatter:new Util().timestampToDate},
+            {field:'completeTime',title:'完成时间',width:'15%',align:'center',sortable:true,formatter:new Util().timestampToDate}/*,
+            {field:'operation',title:'操作',width:'10%',align:'center',sortable:true,formatter:function(a,record){
+                    if(record.status==1){
+                        return "<a href='#' onclick='alert(111)'>查看任务</a>"
+                    }else{
+                        return "<a href='#' onclick='showTaskUpload()'>执行任务</a>"
+                    }
+             }}*/
+        ]]
+        $("#taskGrid").datagrid({
+            data:data,
+            rownumbers:true,
+            columns:columns,
+            toolbar:[{
+                text:'刷新',
+                iconCls:'icon-reload',
+                handler:function(){
+                    loadTasks();
+                }
+            },{
+                text:'导入',
+                iconCls:'icon-add',
+                handler:function(){
+                    showTaskUpload();
+                }
+            }],
+            onClickRow:function(index,row){
+
+            }
+        });
+    }
+
+    loadTasks();
+    function loadTasks(){
+        loader.getTaskList().taskList({
+            success:function(data){
+                showTaskGrid(data);
+            }
+        })
+    }
+
+
+    function showTaskUpload() {
+        $.messager.defaults={
+            ok:"上传用户",
+            cancel:"上传订单"
+        }
+
+        $.messager.confirm("请选择任务类型","如果是上传用户数据，请选择‘上传用户’，如果是上传订单，请选择‘上传订单’",function(b){
+            loader.getBase().openUploadFile({
+                success:function(data){
+                    loader.getBase().startWaiting();
+                    var params = {
+                        success:function(){
+                            loader.getBase().stopWaiting();
+                            $.messager.show({
+                                title:'上传成功',
+                                msg:"上传成功",
+                                timeout:5000,
+                                showType:'slide'
+                            });
+                            loadTasks();
+                        },
+
+                        fail:function(){
+                            loader.getBase().stopWaiting();
+                            $.messager.show({
+                                title:'上传失败',
+                                msg:"上传失败",
+                                timeout:5000,
+                                showType:'slide'
+                            });
+                            loadTasks();
+                        },
+
+                        error:function(){
+                            loader.getBase().stopWaiting();
+                            $.messager.show({
+                                title:'上传失败',
+                                msg:"上传失败",
+                                timeout:5000,
+                                showType:'slide'
+                            });
+                            loadTasks();
+                        }
+                    }
+
+                    /*if(b){
+                        loader.getTaskList().uploadUserFile(data.id,params);
+                    }else{
+                        loader.getTaskList().uploadOrderFile(data.id,params);
+                    }*/
+
+                    loader.getBase().stopWaiting();
+                    $('#dialogContent').dialog({
+                        title: '导入数据',
+                        width: 500,
+                        height:400,
+                        cache: false,
+                        toolbar:[],
+                        closable:true,
+                        onMove:function(left,top){
+                            var width = loader.getWidth();
+                            var height = loader.getHiehgt();
+                            if(left>width-100||left<0||top>height-100||top<0){
+                                $("#dialogContent").dialog({
+                                    left:342,
+                                    top:282
+                                });
+                            }
+                        },
+                        href: 'content/taskUserinfoDetail.html',
+                        modal: true,
+                        onClose : function () {
+
+                        },
+                        onOpen:function(){
+                            setTimeout(function(){
+                                loader.getTaskUserinfoDetail().loadData(data.id,b,{
+                                    close:function(){
+                                        $('#dialogContent').dialog("close");
+                                    },
+                                    submit:function(){
+                                        loader.getBase().startWaiting();
+                                        $('#dialogContent').dialog("close");
+                                        if(b){
+                                            loader.getTaskList().uploadUserFile(data.id,params);
+                                        }else{
+                                            loader.getTaskList().uploadOrderFile(data.id,params);
+                                        }
+                                    }
+                                });
+                            },500);
+
+                        }
+                    });
+
+                },
+                fail:function(){
+                    loader.getBase().stopWaiting();
+                    $.messager.show({
+                        title:'上传失败',
+                        msg:"上传失败",
+                        timeout:5000,
+                        showType:'slide'
+                    });
+                },
+                error:function(){
+                    loader.getBase().stopWaiting();
+                    $.messager.show({
+                        title:'上传失败',
+                        msg:"上传失败",
+                        timeout:5000,
+                        showType:'slide'
+                    });
+                }
+            });
+        });
+
+        $.messager.defaults={
+            ok:"确定",
+            cancel:"取消"
+        }
+    }
+
+</script>

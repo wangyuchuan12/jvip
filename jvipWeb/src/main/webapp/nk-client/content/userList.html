@@ -16,27 +16,48 @@
 
 <script>
     var columns = [[
-        {field:'name',title:'名称',width:'10%',align:'center',sortorder:'asc',sortable:"true"},
-        {field:'phonenumber',title:'手机号码',align:'center',width:'10%',sortable:false},
+        {field:'subordinateUsername',title:'名称',width:'10%',align:'center',sortorder:'asc',sortable:"true"},
+        {field:'subordinatephonenumber',title:'手机号码',align:'center',width:'10%',sortable:false},
         {field:'level',title:'深度',align:'center',width:'10%',sortable:true},
-        {field:'referee',title:'邀请人',width:'10%',align:'center',sortable:true},
-        {field:'grade',title:'等级',width:'10%',align:'center',sortable:true},
-        {field:'integral',title:'积分',width:'10%',align:'center',sortable:true},
+        {field:'refereeName',title:'邀请人',width:'10%',align:'center',sortable:true},
+        {field:'subordinatGrade',title:'等级',width:'10%',align:'center',sortable:true},
+        {field:'subordinateintegral',title:'积分',width:'10%',align:'center',sortable:true},
         {field:'invitationnum',title:'邀请人数',width:'10%',align:'center',sortable:true},
-        {field:'amount',title:'购买金额',width:'10%',align:'center',sortable:true}
+        {field:'totalAmount',title:'购买金额',width:'10%',align:'center',sortable:true}
     ]]
 
     showUserlistGrid(null);
 
 
-    function showUserlistGrid(){
+    function showUserlistGrid(data){
+        if(!data){
+            data = [];
+        }
         $("#userGrid").datagrid({
             rownumbers:true,
             columns:columns,
+            data:data,
             onClickRow:function(index,row){
 
             }
         });
     }
+
+    function flushData(){
+        loader.getUserList().userList({
+            success:function(data){
+                showUserlistGrid(data.data);
+            }
+        })
+    }
+
+
+    loader.getUserList().init({
+        render:function(){
+            flushData();
+        }
+    });
+
+
 
 </script>

@@ -7,20 +7,21 @@ import com.zjmxdz.domain.dto.*;
 import com.zjmxdz.domain.vo.ImportOrderData;
 import com.zjmxdz.domain.vo.ImportUserData;
 import com.zjmxdz.exception.UserInfoNullException;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sun.nio.ch.IOUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class ExecuterService {
-    @Autowired
-    private TappPurchaseRecordService tappPurchaseRecordService;
 
     @Autowired
     private TappSubordinateService tappSubordinateService;
@@ -39,6 +40,12 @@ public class ExecuterService {
 
     @Autowired
     private TbaseGradeConfigService tbaseGradeConfigService;
+
+    @Value("${userFileDir}")
+    private String userFileDir;
+
+    @Value("${orderFileDir}")
+    private String orderFileDir;
 
     public void importAllTask(){
         TappImportTaskDto tappImportTaskDto = new TappImportTaskDto();
@@ -86,6 +93,28 @@ public class ExecuterService {
         if(CommonUtil.isEmpty(tbaseUserinfo)){
             throw new UserInfoNullException();
         }
+
+        BigDecimal userAmount =tbaseUserinfo.getAmount();
+
+        if(CommonUtil.isEmpty(amount)){
+            amount = new BigDecimal(0);
+        }
+
+        if(CommonUtil.isEmpty(userAmount)){
+            userAmount = new BigDecimal(0);
+        }
+
+        userAmount = userAmount.add(amount);
+
+        tbaseUserinfo.setAmount(userAmount);
+
+        try {
+            tbaseUserinfoService.update(tbaseUserinfo);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
 
         TbasePurchaseConfigDto tbasePurchaseConfigDto = new TbasePurchaseConfigDto();
 
@@ -152,16 +181,44 @@ public class ExecuterService {
             }
 
         }
+    }
 
+    public void uploadUserTask(String path,String fileName) throws Exception {
+        TappImportTask importTask = new TappImportTask();
+        importTask.setStatus(0);
+        importTask.setCreateAt(new Timestamp(new Date().getTime()));
+        importTask.setFilename(fileName);
+        importTask.setFilePath(path);
+        importTask.setType(0);
+        tappImportTaskService.add(importTask);
+        importTask(importTask.getId());
+    }
+
+    public void uploadOrderTask(String path,String fileName) throws Exception {
+        TappImportTask importTask = new TappImportTask();
+        importTask.setStatus(0);
+        importTask.setCreateAt(new Timestamp(new Date().getTime()));
+        importTask.setFilename(fileName);
+        importTask.setFilePath(path);
+        importTask.setType(1);
+        tappImportTaskService.add(importTask);
+        importTask(importTask.getId());
+    }
+
+    public void importTask(String taskId)throws Exception{
+        TappImportTask tappImportTask = tappImportTaskService.findOne(taskId);
+        importTask(tappImportTask);
     }
 
     public void importTask(TappImportTask importTask)throws Exception{
+        importTask.setStartTime(new Timestamp(new Date().getTime()));
         if(importTask.getType().intValue()==0){
             importUserData(importTask);
         }else if(importTask.getType().intValue()==1){
             importOrderData(importTask);
         }
         importTask.setStatus(1);
+        importTask.setCompleteTime(new Timestamp(new Date().getTime()));
         tappImportTaskService.update(importTask);
     }
 
@@ -179,6 +236,14 @@ public class ExecuterService {
             TbaseUserinfoDto newRefereeUserinfoDto = new TbaseUserinfoDto();
             newRefereeUserinfoDto.setUsername(refereeUserinfo.getRefereeAccount());
             TbaseUserinfo newRefereeUserinfo = tbaseUserinfoService.findOne(newRefereeUserinfoDto);
+            tappSubordinate.setRefereeUserId(newRefereeUserinfo.getId());
+            tappSubordinate.setRefereeName(newRefereeUserinfo.getName());
+            try {
+                tappSubordinateService.update(tappSubordinate);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             if (CommonUtil.isNotEmpty(newRefereeUserinfo)) {
                 level++;
                 flushSubordinate(tbaseUserinfo, newRefereeUserinfo, level);
@@ -231,6 +296,7 @@ public class ExecuterService {
                 tbaseUserinfo.setIsHierarchy(0);
                 tbaseUserinfo.setPassword("1234567");
                 tbaseUserinfo.setTaskId(importTask.getId());
+                tbaseUserinfo.setPhonenumber(importUserData.getAccount());
                 tbaseUserinfoService.add(tbaseUserinfo);
             }
         }

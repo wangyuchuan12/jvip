@@ -94,13 +94,21 @@ class Menu
 				imgStyle:"left:3px;"
 			});
 
-			/*menus.push({
+			menus.push({
 				name:"任务",
 				url:"",
 				loadTarget:"taskList",
-				iconUrl:"image/message.png",
+				iconUrl:"image/task.png",
 				imgStyle:"left:3px;"
-			});*/
+			});
+
+			menus.push({
+				name:"设置",
+				url:"",
+				loadTarget:"setup",
+				iconUrl:"image/setup.png",
+				imgStyle:"left:3px;"
+			});
 
 			this.menus = menus;
 

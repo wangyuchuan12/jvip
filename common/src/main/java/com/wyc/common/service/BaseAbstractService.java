@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -68,6 +69,7 @@ abstract public class BaseAbstractService<T> {
         Field updateAtField = null;
 
         for(Field field:fields){
+            field.setAccessible(true);
             Id id = field.getAnnotation(Id.class);
 
             UpdateAt updateAt = field.getAnnotation(UpdateAt.class);
@@ -122,7 +124,10 @@ abstract public class BaseAbstractService<T> {
                                     Timestamp t1 = new Timestamp(lt);
                                     field.set(target,t1);
                                 }
-
+                            }else if(field.getType().equals(BigDecimal.class)){
+                                if(CommonUtil.isNotEmpty(map.getValue())) {
+                                    field.set(target, new BigDecimal(map.getValue().toString()));
+                                }
                             }
                         }
                     }catch (Exception e2){

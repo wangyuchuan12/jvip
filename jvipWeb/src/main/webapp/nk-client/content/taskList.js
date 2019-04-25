@@ -19,6 +19,51 @@ class TaskList extends BasePage{
         return "#taskList";
     }
 
+    taskList(callback){
+        var base = loader.getBase();
+        base.request({
+            url:"/api/taskList",
+            data:{
+
+            },
+            success:function(result){
+                callback.success(result);
+            }
+        });
+    }
+
+    uploadUserFile(resourceId,callback){
+        var base = loader.getBase();
+        base.request({
+            url:"/api/uploadUserFile",
+            data:{
+                resourceId:resourceId
+            },
+            success:function(result){
+                callback.success(result);
+            },
+            error:function(){
+                callback.error();
+            }
+        });
+    }
+
+    uploadOrderFile(resourceId,callback){
+        var base = loader.getBase();
+        base.request({
+            url:"/api/uploadOrderFile",
+            data:{
+                resourceId:resourceId
+            },
+            success:function(result){
+                callback.success(result);
+            },
+            error:function(){
+                callback.error();
+            }
+        });
+    }
+
 
     init(params){
         super.init(params);

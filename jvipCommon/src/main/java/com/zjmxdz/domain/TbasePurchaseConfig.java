@@ -3,6 +3,8 @@ package com.zjmxdz.domain;
 
 import com.wyc.common.annotation.Condition;
 import com.wyc.common.annotation.Conditions;
+import com.wyc.common.annotation.CreateAt;
+import com.wyc.common.annotation.UpdateAt;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.repository.query.parser.Part;
@@ -55,8 +57,10 @@ public class TbasePurchaseConfig {
     private Integer rewardLevel;
 
     @Column(name = "update_at")
+    @UpdateAt
     private Timestamp updateAt;
     @Column(name = "create_at")
+    @CreateAt
     private Timestamp createAt;
 
 }

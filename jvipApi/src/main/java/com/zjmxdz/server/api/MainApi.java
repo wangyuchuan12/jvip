@@ -11,27 +11,28 @@ import com.wyc.common.util.ExcelUtil;
 import com.zjmxdz.dao.TappOrderDao;
 import com.zjmxdz.domain.TappImportTask;
 import com.zjmxdz.domain.TappOrder;
+import com.zjmxdz.domain.TbaseResource;
 import com.zjmxdz.domain.TbaseUserinfo;
 import com.zjmxdz.domain.dto.TappOrderDto;
 import com.zjmxdz.domain.dto.TbaseUserinfoDto;
-import com.zjmxdz.domain.vo.PurchaseRecordVo;
-import com.zjmxdz.domain.vo.SubordinateVo;
-import com.zjmxdz.domain.vo.UserInfoVo;
+import com.zjmxdz.domain.vo.*;
 import com.zjmxdz.service.*;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.*;
 
 @Controller
 @RequestMapping("api")
@@ -58,11 +59,18 @@ public class MainApi {
     @Autowired
     private TappOrderService tappOrderService;
 
+    @Autowired
+    private TbaseResourceService tbaseResourceService;
+
     @Value("${usercenter.token.expires}")
     private Long expires;
 
+    @Value("${fileDir}")
+    private String fileDir;
+
     @RequestMapping("importTasks")
     @ResponseBody
+    @Transient
     public Object importTasks()throws Exception{
         try {
             executerService.importAllTask();
@@ -74,6 +82,106 @@ public class MainApi {
             map.put("success", false);
             return map;
         }
+    }
+
+
+    @RequestMapping("uploadFile")
+    @ResponseBody
+    @Auth(mustAuthentication = false)
+    @Transient
+    public Object uploadFile(@RequestParam("file")MultipartFile multipartFile)throws Exception{
+        InputStream inputStream = multipartFile.getInputStream();
+        String fileName = multipartFile.getOriginalFilename();
+        File dir = new File(fileDir,fileName);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+
+        File file = new File(dir,UUID.randomUUID().toString());
+
+        IOUtils.copy(inputStream,new FileOutputStream(file));
+
+        TbaseResource tbaseResource = new TbaseResource();
+        tbaseResource.setName(fileName);
+        tbaseResource.setFilePath(file.getPath());
+        tbaseResourceService.add(tbaseResource);
+
+        Map<String,Object> data = new HashMap<>();
+        data.put("success",true);
+        data.put("data",tbaseResource);
+        return data;
+    }
+
+    @RequestMapping("uploadUserFile")
+    @ResponseBody
+    @Transient
+    public Object uploadUserFile(HttpServletRequest httpServletRequest)throws Exception{
+        String resourceId = httpServletRequest.getParameter("resourceId");
+        TbaseResource tbaseResource = tbaseResourceService.findOne(resourceId);
+        executerService.uploadUserTask(tbaseResource.getFilePath(),tbaseResource.getName());
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
+
+    @RequestMapping("uploadOrderFile")
+    @ResponseBody
+    @Transient
+    public Object uploadOrderFile(HttpServletRequest httpServletRequest)throws Exception{
+        String resourceId = httpServletRequest.getParameter("resourceId");
+        TbaseResource tbaseResource = tbaseResourceService.findOne(resourceId);
+        executerService.uploadOrderTask(tbaseResource.getFilePath(),tbaseResource.getName());
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
+
+    @RequestMapping("importTask")
+    @ResponseBody
+    @Transient
+    public Object importTask(HttpServletRequest httpServletRequest)throws Exception{
+        String taskId = httpServletRequest.getParameter("taskId");
+        executerService.importTask(taskId);
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+
+    }
+
+    @RequestMapping("taskUserinfoDetailByResourceId")
+    @ResponseBody
+    @Transient
+    public Object taskUserinfoDetailByResourceId(HttpServletRequest httpServletRequest)throws Exception{
+
+        String resourceId = httpServletRequest.getParameter("resourceId");
+        TbaseResource tbaseResource = tbaseResourceService.findOne(resourceId);
+        String filePath = tbaseResource.getFilePath();
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        List<ImportUserData> importUserDataList = ExcelUtil.read(ImportUserData.class,fileInputStream,0,10);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        map.put("data",importUserDataList);
+
+        return map;
+    }
+
+    @RequestMapping("taskOrderDetailByResourceId")
+    @ResponseBody
+    @Transient
+    public Object taskOrderDetailByResourceId(HttpServletRequest httpServletRequest)throws Exception{
+
+        String resourceId = httpServletRequest.getParameter("resourceId");
+        TbaseResource tbaseResource = tbaseResourceService.findOne(resourceId);
+        String filePath = tbaseResource.getFilePath();
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        List<ImportOrderData> importUserDataList = ExcelUtil.read(ImportOrderData.class,fileInputStream,0,10);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        map.put("data",importUserDataList);
+
+        return map;
     }
 
 
@@ -120,7 +228,7 @@ public class MainApi {
     @RequestMapping("taskList")
     @ResponseBody
     public Object tasks(HttpServletRequest httpServletRequest){
-        return tappImportTaskService.findAllTasks();
+        return tappImportTaskService.findAllTasks(0,100);
     }
 
 

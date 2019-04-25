@@ -1,5 +1,7 @@
 package com.zjmxdz.domain;
 import com.wyc.common.annotation.Condition;
+import com.wyc.common.annotation.CreateAt;
+import com.wyc.common.annotation.UpdateAt;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -36,9 +38,19 @@ public class TappSubordinate {
     @Column(name = "subordinate_invitationnum")
     private Integer invitationNum;
 
+    //邀约人id
+    @Column(name = "subordinate_refereeuserid")
+    private String refereeUserId;
+
+    //邀约人名称
+    @Column(name = "subordinate_refereename")
+    private String refereeName;
+
     @Column(name = "update_at")
+    @UpdateAt
     private Timestamp updateAt;
     @Column(name = "create_at")
+    @CreateAt
     private Timestamp createAt;
 
 }

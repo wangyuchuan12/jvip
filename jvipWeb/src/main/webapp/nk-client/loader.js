@@ -175,6 +175,26 @@ class Loader
 		return this.userList;
 	}
 
+	getTaskUpload(){
+		if(!this.taskUpload){
+			var taskUpload = new TaskUpload();
+			this.taskUpload = taskUpload;
+		}
+		return this.taskUpload;
+	}
+
+	getTaskUserinfoDetail(){
+		if(!this.taskUserinfoDetail){
+			var taskUserinfoDetail = new TaskUserinfoDetail();
+			this.taskUserinfoDetail = taskUserinfoDetail;
+		}
+		return this.taskUserinfoDetail;
+	}
+
+	loadTaskUpload(){
+		this.getTaskUpload().showView();
+	}
+
 	loadOrderList(){
 		this.getOrderList().showView();
 	}
