@@ -14,9 +14,9 @@ class Config
 			return;
 		}catch(ex){
 			this.config={
-				"baseUrl":"http://localhost:8085",
+				"baseUrl":"http://www.chengxihome.com:8081",
 				"waitIconUrl":"etc/wait.png",
-				"socketPath":"ws://47.106.241.142:9999/ws",
+				"socketPath":"ws://www.chengxihome.com:9999/ws",
 				"localSocketPath":"/ws",
 				"localSocketHost":"localhost",
 				"localSocketPort": 8087

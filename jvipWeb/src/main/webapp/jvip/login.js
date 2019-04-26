@@ -93,11 +93,7 @@ class Login
 					loader.getConfig().setToken(result.token);
 					loader.getConfig().setLoginName(identity);
 					loader.getConfig().setPassword(password);
-					loader.getConfig().setUserType(result.user.staffUsertype);
-					loader.getBasicInfo().setUsername(result.user.staffName);
-					loader.getConfig().setCompanyId(result.user.staffCompanyid);
-					loader.getBase().connSocket();
-                    that.showTray();
+					loader.getBasicInfo().setUsername(result.data.name);
 				}else{
 					callback.fail();
 				}

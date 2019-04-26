@@ -224,7 +224,6 @@ class Base
 		var requestUrl = loader.getConfig().baseUrl()+requestUrl;
 		alert("requestUrl:"+requestUrl+",data:"+JSON.stringify(data));
 		data.url = requestUrl;
-		alert(JSON.stringify(data));
 		params.url = requestUrl;
 		params.beforeSend = function(request){
 			var token = loader.getConfig().getToken();
