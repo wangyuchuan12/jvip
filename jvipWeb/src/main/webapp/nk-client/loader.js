@@ -191,6 +191,14 @@ class Loader
 		return this.taskUserinfoDetail;
 	}
 
+	getSetup(){
+		if(!this.setup){
+			var setup = new Setup();
+			this.setup = setup;
+		}
+		return this.setup;
+	}
+
 	loadTaskUpload(){
 		this.getTaskUpload().showView();
 	}

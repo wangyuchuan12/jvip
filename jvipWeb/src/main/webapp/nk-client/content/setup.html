@@ -1,0 +1,201 @@
+<script type="text/javascript" src="iview/kissy-min.js"></script>
+<script type="text/javascript" src="iview/steps.js"></script>
+<link rel="stylesheet" type="text/css" href="iview/steps.css" />
+<div id="setup">
+    <ol id="steps-demo-1">
+        <li>1. 升级要求</li>
+        <li>2. 购买奖励-购买人</li>
+        <li>3. 购买奖励-推荐人</li>
+    </ol>
+
+    <table  style="width:100%;height:100%;" class="" id="setupGrid">
+        <thead>
+        <tr>
+
+        </tr>
+        </thead>
+    </table>
+
+    <div style="text-align:center;padding:5px">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="resetSetupData()" data-options="iconCls:'icon-reload'">重置</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitSetupData()" data-options="iconCls:'icon-ok'">确定</a>
+    </div>
+</div>
+
+<script>
+
+    function submitSetupData(){
+        var list = new Array();
+        var step = loader.getSetup().getStep();
+        if(step==1){
+            $("input[name='grade_integral']").each(function(){
+                var integral = $(this).val();
+                var id = $(this).attr("id");
+                var grade = $(this).attr("grade");
+                list.push({
+                    integral:integral,
+                    id:id,
+                    grade:grade
+                });
+
+                loader.getSetup().submitGradeConfig(list,{
+                    success:function(data){
+                        loader.getSetup().showIntegralConfig();
+                    }
+                });
+
+            });
+        }else if(step==2){
+            $("input[name='integral_integral']").each(function(){
+                var integral = $(this).val();
+                var id = $(this).attr("id");
+                var amount = $(this).attr("amount");
+                list.push({
+                    integral:integral,
+                    id:id,
+                    amount:amount
+                });
+
+                loader.getSetup().submitIntegralConfig(list,{
+                    success:function(data){
+                        loader.getSetup().showPurchaseConfig();
+                    }
+                });
+
+            });
+        }else if(step==3){
+            $("input[name='purchase_money']").each(function(){
+                var purchaseMoney = $(this).val();
+                var id = $(this).attr("purchase_money_id");
+                var purchaseIntegral = $("input[purchase_integral_id='"+id+"']").val();
+
+                list.push({
+                    rewardIntegral:purchaseIntegral,
+                    id:id,
+                    rewardMoney:purchaseMoney
+                });
+
+                loader.getSetup().submitPurchaseConfig(list,{
+                    success:function(data){
+                        alert("完成了");
+                    }
+                });
+
+            });
+        }
+
+    }
+
+
+    var S = KISSY, DOM = S.DOM,Event = S.Event,
+        step1,step2,step3,step4,step5;
+    //示例1
+    step1 = new S.Steps('#steps-demo-1');
+    //运行
+    step1.render();
+    //激活第二个步骤
+
+
+    loader.getSetup().init({
+        render:function(){
+            this.loadGrid();
+            this.showGradeConfig();
+        },
+
+        showIntegralConfig:function(){
+            this.setStep(2);
+            var that = this;
+            this.requestIntegralConfigs({
+                success:function(data){
+                    that.loadGrid(data,that.getIntegralColumns());
+                }
+            });
+        },
+
+        showGradeConfig:function(){
+            this.setStep(1);
+            var that = this;
+            this.requestGradeConfig({
+                success:function(data){
+                    that.loadGrid(data,that.getGradeColumns());
+                }
+            })
+        },
+
+        showPurchaseConfig:function(){
+            this.setStep(3);
+            var that = this;
+            this.requestPurchaseConfigs({
+                success:function(data){
+                    that.loadGrid(data,that.getPurchaseColumns());
+                }
+            })
+        },
+
+        getPurchaseColumns:function(){
+            var columns = [[
+                {field:'id',title:'id',width:'20%',align:'center',sortorder:'asc',sortable:"true"},
+                {field:'conditionLimitAmount',title:'金额',width:'20%',align:'center',sortorder:'asc',sortable:"true",formatter:function(grade,record){
+                        return grade;
+                 }},
+                {field:'rewardLevel',title:'影响等级差',width:'20%',align:'center',sortorder:'asc',sortable:"true",formatter:function(rewardLevel,record){
+                        return rewardLevel;
+                 }},
+                {field:'rewardMoney',title:'奖励金额',width:'20%',align:'center',sortorder:'asc',sortable:"true",formatter:function(integral,record){
+                        return "<input class='easyui-textbox' value='"+integral+"' type='number' name='purchase_money' purchase_money_id='"+record.id+"' amount='"+record.rewardMoney+"'></input>";
+                 }},
+                {field:'rewardIntegral',title:'奖励分数',width:'20%',align:'center',sortorder:'asc',sortable:"true",formatter:function(integral,record){
+                        return "<input class='easyui-textbox' value='"+integral+"' type='number' name='purchase_integral' purchase_integral_id='"+record.id+"' amount='"+record.rewardIntegral+"'></input>";
+                 }}
+
+            ]]
+            return columns;
+        },
+
+        getIntegralColumns:function(){
+            var columns = [[
+                {field:'id',title:'id',width:'33%',align:'center',sortorder:'asc',sortable:"true"},
+                {field:'amount',title:'金额',width:'33%',align:'center',sortorder:'asc',sortable:"true",formatter:function(grade,record){
+                        return grade;
+                    }},
+                {field:'integral',title:'积分',width:'33%',align:'center',sortorder:'asc',sortable:"true",formatter:function(integral,record){
+                        return "<input class='easyui-textbox' value='"+integral+"' type='number' name='integral_integral' id='"+record.id+"' amount='"+record.amount+"'></input>";
+                 }}
+            ]]
+            return columns;
+        },
+
+        getGradeColumns:function(){
+            var columns = [[
+                {field:'id',title:'id',width:'33%',align:'center',sortorder:'asc',sortable:"true"},
+                {field:'grade',title:'等级',width:'33%',align:'center',sortorder:'asc',sortable:"true",formatter:function(grade,record){
+                        return grade;
+                }},
+                {field:'integral',title:'积分',width:'33%',align:'center',sortorder:'asc',sortable:"true",formatter:function(integral,record){
+                    return "<input class='easyui-textbox' value='"+integral+"' type='number' name='grade_integral' id='"+record.id+"' grade='"+record.grade+"'></input>";
+                 }}
+            ]]
+            return columns;
+        },
+        loadGrid:function(data,columns){
+            $("#setupGrid").datagrid({
+                data:data,
+                rownumbers:true,
+                columns:columns,
+                toolbar:[],
+                onClickRow:function(index,row){
+
+                }
+            });
+        },
+        setStep:function(seq){
+            step1.set('act',seq);
+            S.log(step1.get('act'));
+            this.step = seq;
+        },
+        getStep:function(){
+            return this.step;
+        }
+    });
+
+</script>

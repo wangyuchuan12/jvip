@@ -119,13 +119,29 @@ class BasePage{
         });
     }
 
-    showDialog(params){
+    showDialog(){
+        var params = new Object();
+        params.width = this.dialogWidth();
+        params.height = this.dialogHeight();
+        params.title = this.title;
+        params.cache = false;
+        params.modal = true;
+        params.empty = true;
+        params.onClose = this.onClose;
+        params.onOpen = this.onOpen;
+        params.parentSelector = this.dialogParentSelector();
+        this.doShowDialog(params);
+    }
+
+    doShowDialog(params){
         var width = params.width;
         var height = params.height;
         var title = params.title;
         var cache = params.cache;
         var modal = params.modal;
         var empty = params.empty;
+        var onOpen = params.onOpen;
+        var onClose = params.onClose;
         if(!cache){
             cache = false;
         }
@@ -134,23 +150,22 @@ class BasePage{
         }
         var url = this.url();
         var that = this;
-        if(empty){
-            $(params.parentSelector).empty();
-        }
 
         var onOpen = function(){
             params.onOpen();
         }
-        
+
         $(params.parentSelector).dialog({
-            title: title,
+            title:title,
             width: width,
-            height: height,
-            cache: cache,
+            height:height,
+            cache: false,
+            toolbar:[],
+            closable:true,
             href: url,
-            modal: modal,
-            onClose :params.onClose,
-            onOpen:onOpen
+            modal: true,
+            onOpen:onOpen,
+            onClose:onClose
         });
     }
 
@@ -204,6 +219,9 @@ class BasePage{
             render.call(that,data,changeData,oldData);
         }
         this.params = params;
+        for(var i in params){
+            this[i] = params[i];
+        }
     }
 
 

@@ -7,10 +7,7 @@ import com.wyc.common.domain.Client;
 import com.wyc.common.service.ClientService;
 import com.wyc.common.util.CommonUtil;
 import com.wyc.common.util.ExcelUtil;
-import com.zjmxdz.domain.TappImportTask;
-import com.zjmxdz.domain.TappOrder;
-import com.zjmxdz.domain.TbaseResource;
-import com.zjmxdz.domain.TbaseUserinfo;
+import com.zjmxdz.domain.*;
 import com.zjmxdz.domain.dto.TappOrderDto;
 import com.zjmxdz.domain.dto.TbaseUserinfoDto;
 import com.zjmxdz.domain.vo.*;
@@ -19,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -60,6 +58,15 @@ public class MainApi {
     @Autowired
     private TbaseResourceService tbaseResourceService;
 
+    @Autowired
+    private TbasePurchaseConfigService tbasePurchaseConfigService;
+
+    @Autowired
+    private TbaseIntegralConfigService tbaseIntegralConfigService;
+
+    @Autowired
+    private TbaseGradeConfigService tbaseGradeConfigService;
+
     @Value("${usercenter.token.expires}")
     private Long expires;
 
@@ -80,6 +87,87 @@ public class MainApi {
             map.put("success", false);
             return map;
         }
+    }
+
+
+    @RequestMapping("purchaseConfigs")
+    @ResponseBody
+    @Transient
+    public Object purchaseConfigs(HttpServletRequest httpServletRequest){
+        List<TbasePurchaseConfig> tbasePurchaseConfigs = tbasePurchaseConfigService.findAll();
+        return tbasePurchaseConfigs;
+    }
+
+    @RequestMapping("integralConfigs")
+    @ResponseBody
+    @Transient
+    public Object integralConfigs(HttpServletRequest httpServletRequest){
+        List<TbaseIntegralConfig> tbaseIntegralConfigs = tbaseIntegralConfigService.findAll();
+        return tbaseIntegralConfigs;
+    }
+
+    @RequestMapping("gradeConfig")
+    @ResponseBody
+    @Transient
+    public Object gradeConfig(HttpServletRequest httpServletRequest){
+        List<TbaseGradeConfig> tbaseGradeConfigs = tbaseGradeConfigService.findAll();
+        return tbaseGradeConfigs;
+    }
+
+    @RequestMapping("flushPurchaseConfig")
+    @ResponseBody
+    @Transient
+    public Object flushPurchaseConfig(@RequestBody List<TbasePurchaseConfigVo> purchaseConfigs)throws Exception{
+        for(TbasePurchaseConfigVo tbasePurchaseConfigVo:purchaseConfigs){
+            TbasePurchaseConfig tbasePurchaseConfig = tbasePurchaseConfigService.findOne(tbasePurchaseConfigVo.getId());
+            //tbasePurchaseConfig.setConditionGrade(tbasePurchaseConfig.getConditionGrade());
+            //tbasePurchaseConfig.setConditionLimitAmount(tbasePurchaseConfigVo.getConditionLimitAmount());
+            //tbasePurchaseConfig.setConditionMaxAmount(tbasePurchaseConfigVo.getConditionMaxAmount());
+            tbasePurchaseConfig.setRewardIntegral(tbasePurchaseConfigVo.getRewardIntegral());
+            //tbasePurchaseConfig.setRewardLevel(tbasePurchaseConfigVo.getRewardLevel());
+            tbasePurchaseConfig.setRewardMoney(tbasePurchaseConfigVo.getRewardMoney());
+            //tbasePurchaseConfig.setRewardPeas(tbasePurchaseConfigVo.getRewardPeas());
+            tbasePurchaseConfigService.update(tbasePurchaseConfig);
+        }
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
+
+
+    @RequestMapping("flushIntegralConfig")
+    @ResponseBody
+    @Transient
+    public Object flushIntegralConfig(@RequestBody List<TbaseIntegralConfigVo> tbaseIntegralConfigs)throws Exception{
+        for(TbaseIntegralConfigVo tbaseIntegralConfigVo:tbaseIntegralConfigs){
+            TbaseIntegralConfig tbaseIntegralConfig = tbaseIntegralConfigService.findOne(tbaseIntegralConfigVo.getId());
+            tbaseIntegralConfig.setAmount(tbaseIntegralConfigVo.getAmount());
+            //tbaseIntegralConfig.setGradle(tbaseIntegralConfigVo.getGradle());
+            tbaseIntegralConfig.setIntegral(tbaseIntegralConfigVo.getIntegral());
+            tbaseIntegralConfigService.update(tbaseIntegralConfig);
+        }
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
+    }
+
+
+    @RequestMapping("flushGradeConfig")
+    @ResponseBody
+    @Transient
+    public Object flushGradeConfig(@RequestBody List<TbaseGradeConfigVo> tbaseGradeConfigVos)throws Exception{
+        for(TbaseGradeConfigVo tbaseGradeConfigVo:tbaseGradeConfigVos){
+            TbaseGradeConfig tbaseGradeConfig = tbaseGradeConfigService.findOne(tbaseGradeConfigVo.getId());
+            //tbaseGradeConfig.setGrade(tbaseGradeConfigVo.getGrade());
+            tbaseGradeConfig.setIntegral(tbaseGradeConfigVo.getIntegral());
+            tbaseGradeConfigService.update(tbaseGradeConfig);
+        }
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("success",true);
+        return map;
     }
 
 

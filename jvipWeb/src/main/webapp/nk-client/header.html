@@ -6,10 +6,8 @@
         <a href="javascript:void(0)" id="mb" class="easyui-menubutton"
     data-options="menu:'#mm',iconCls:'icon-man'" style="color:black;">你好，<span id="username"></span></a>
         <div id="mm" style="width:150px;">
-            <div data-options="iconCls:'icon-black'" onclick="fullScreen()" id="fullScreen">全屏</div>
-            <div data-options="iconCls:'icon-black'" onclick="exitFullScreen()" id="exitFullScreen" style="display:none;">退出全屏</div>
-            <div data-options="iconCls:'icon-cancel'" onclick="exitSystem()">退出程序</div>
-            <div data-options="iconCls:'icon-back'" onclick="loginOut()">注销用户</div>
+            <div data-options="iconCls:'icon-back'" onclick="setup()">设置</div>
+            <div data-options="iconCls:'icon-back'" onclick="loginOut()">退出登录</div>
         </div>
 
     </div>
@@ -23,20 +21,12 @@
 
     });
 
-    function fullScreen(){
-        $("#fullScreen").css("display","none");
-        $("#exitFullScreen").css("display","block");
-        loader.getHeader().fullScreen();;
-    }
+    function setup(){
+        loader.getHeader().doSetup({
+            onRender:function(){
 
-    function exitFullScreen(){
-        $("#fullScreen").css("display","block");
-        $("#exitFullScreen").css("display","none");
-        loader.getHeader().exitFullScreen();;
-    }
-
-    function exitSystem(){
-        loader.getHeader().close();
+            }
+        });
     }
 
     function loginOut(){

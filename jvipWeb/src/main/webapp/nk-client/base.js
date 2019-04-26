@@ -222,7 +222,9 @@ class Base
 		}
 		
 		var requestUrl = loader.getConfig().baseUrl()+requestUrl;
+		alert("requestUrl:"+requestUrl+",data:"+JSON.stringify(data));
 		data.url = requestUrl;
+		alert(JSON.stringify(data));
 		params.url = requestUrl;
 		params.beforeSend = function(request){
 			var token = loader.getConfig().getToken();
@@ -267,63 +269,50 @@ class Base
 
 	request(params){
 		var that = this;
-		/*
-		this.proxyRequest(params,{
-			loadLogin:function(){
-				params.loadLogin();
-			},
-			timeout:function(){
-				that.redirectRequest(params,{
-					loadLogin:function(){
-						params.loadLogin();
-					},
-					timeout:function(){
-						params.timeout();
-					},
-					success:function(resp){
-						params.success(resp);
-					},
-					error:function(){
-						params.error();
-					}
-				});
-			},
-			success:function(resp){
-				alert(JSON.stringify(resp));
-				params.success(resp);
-			},
-			error:function(){
-				that.redirectRequest(params,{
-					loadLogin:function(){
-						params.loadLogin();
-					},
-					timeout:function(){
-						params.timeout();
-					},
-					success:function(resp){
-						params.success(resp);
-					},
-					error:function(){
-						params.error();
-					}
-				});
-			}
-		});*/
+		var url = params.url;
+		url = loader.getConfig().baseUrl()+url;
+		params.url = url;
+		params.beforeSend = function(request){
+			var token = loader.getConfig().getToken();
+			request.setRequestHeader("x-token",token);
+		}
 
-		that.redirectRequest(params,{
-			loadLogin:function(){
-				params.loadLogin();
-			},
-			timeout:function(){
-				params.timeout();
-			},
-			success:function(resp){
-				params.success(resp);
-			},
-			error:function(){
-				params.error();
+		var istimeout = true;
+		setTimeout(function(){
+			if(istimeout){
+				if(params.timeout){
+					params.timeout();
+				}
 			}
-		});
+		},10000);
+
+
+		var errorFun = params.error;
+		params.error = function(resp){
+			istimeout = false;
+			if(resp.status==401){
+				loader.loadLogin();
+			}else if(resp.status==0){
+				if(params.timeout){
+					params.timeout();
+				}
+			}else{
+				errorFun.call(null,resp);
+			}
+		}
+
+		var successFun = params.success;
+
+		params.success = function(resp){
+			istimeout = false;
+			successFun.call(null,resp);
+		}
+		// params.crossDomain=true;
+		// params.dataType = "jsonp";
+		// params.jsonpCallback="success";
+
+		$.ajax(params);
+
 	}
 
 	uploadFile(callback){

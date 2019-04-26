@@ -102,14 +102,6 @@ class Menu
 				imgStyle:"left:3px;"
 			});
 
-			menus.push({
-				name:"设置",
-				url:"",
-				loadTarget:"setup",
-				iconUrl:"image/setup.png",
-				imgStyle:"left:3px;"
-			});
-
 			this.menus = menus;
 
 			

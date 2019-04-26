@@ -3,23 +3,15 @@ class Header{
         return "header.html";
     }
 
-    fullScreen(){
-        loader.getBase().fullScreen();
-    }
-
-    exitFullScreen(){
-       loader.getBase().exitFullScreen();
-    }
-
-    close(){
-        loader.getBase().close();
-        loader.getBase().stopRemindTray();
-    }
-
     doLoginout(){
         loader.getLogin().doLoginout();
-        loader.getBase().stopRemindTray();
     }
+
+    doSetup(){
+        loader.getSetup().showDialog();
+    }
+
+
 
     init(params){
         this.params = params;

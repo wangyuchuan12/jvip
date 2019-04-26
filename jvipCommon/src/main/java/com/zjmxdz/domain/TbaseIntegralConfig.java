@@ -1,10 +1,13 @@
 package com.zjmxdz.domain;
 
 
+import com.wyc.common.annotation.Condition;
+import com.wyc.common.annotation.Conditions;
 import com.wyc.common.annotation.CreateAt;
 import com.wyc.common.annotation.UpdateAt;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.repository.query.parser.Part;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -25,9 +28,11 @@ public class TbaseIntegralConfig {
     private Integer integral;
 
     @Column(name = "integralconfig_amount")
+    @Conditions(@Condition(properties="CONDITION_LIMIT_AMOUNT",type= Part.Type.LESS_THAN))
     private BigDecimal amount;
 
     @Column(name = "integralconfig_gradle")
+    @Conditions(@Condition(properties="CONDITION_MAX_AMOUNT",type= Part.Type.GREATER_THAN_EQUAL))
     private Integer gradle;
 
     @Column(name = "update_at")

@@ -274,6 +274,10 @@ abstract public class BaseAbstractService<T> {
         return findAll(t,null);
     }
 
+    public List<T> findAll(){
+        return getJpaRepository().findAll();
+    }
+
     public List<T> findAll(T t, Pageable pageable){
 
         try {
