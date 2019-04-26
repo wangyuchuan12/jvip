@@ -189,6 +189,20 @@ abstract public class BaseAbstractService<T> {
         }
     }
 
+    public Object getValue(String sql){
+        try {
+            List<Map<String, Object>> list = JdbcUtils.executeQuery(dataSource, sql);
+            if(list.size()>0){
+                Map<String,Object> map = list.get(0);
+                for(Map.Entry<String,Object> entry:map.entrySet()){
+                    return entry.getValue();
+                }
+            }
+        }catch (Exception e){
+
+        }
+        return null;
+    }
 
     public T findMax(String name)throws Exception{
         Field[] fields = this.persistentClass.getDeclaredFields();

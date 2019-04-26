@@ -14,7 +14,10 @@ public class UserInfoVo {
     private String refereeUserId;
     private String refereeUserName;
     private BigDecimal amount;
+    private BigDecimal totalAmount;
     private Long integral;
     private Integer grade;
     private Integer peas;
+    private Integer subordinateNum;
+    private Integer orderNum;
 }

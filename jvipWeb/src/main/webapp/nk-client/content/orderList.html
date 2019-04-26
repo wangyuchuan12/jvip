@@ -40,7 +40,6 @@
     function loadOrderData(){
         loader.getOrderList().orderList({
             success:function(data){
-                alert(JSON.stringify(data));
                 showOrderGrid(data);
             }
         })

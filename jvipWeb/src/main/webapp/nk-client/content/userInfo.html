@@ -1,23 +1,42 @@
 <script type="text/javascript" src="jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
 <div id="userInfo" style="width:100%;height:100%;" >
-    <table border="1 solid" cellspacing="0" style="width:90%;height:200px;text-alig:center">
+    <table border="1 solid" cellspacing="0" style="width:90%;height:200px;text-align:center">
         <tr>
-            <td><label>名称:</label></td><td id="names">黄建明</td>
+            <td><label>名称:</label></td><td id="name"></td>
         </tr>
         <tr>
-            <td><label>手机号码:</label></td><td id="ages">13738139702</td>
+            <td><label>手机号码:</label></td><td id="phonenumber"></td>
         </tr>
         <tr>
-            <td><label>豆豆:</label></td><td id="sexs">500</td>
+            <td><label>余额:</label></td><td id="amount"></td>
         </tr>
         <tr>
-            <td><label>金额:</label></td><td id="tel">540</td>
+            <td><label>购买总额:</label></td><td id="totalAmount"></td>
         </tr>
+
         <tr>
-            <td><label>下级数量:</label></td><td id="address">222</td>
+            <td><label>我的下线用户数量:</label></td><td id="subordinateNum"></td>
         </tr>
+
         <tr>
-            <td><label>购买次数:</label></td><td id="passds">50</td>
+            <td><label>订单数量:</label></td><td id="orderNum"></td>
+        </tr>
+
+        <tr>
+            <td><label>积分:</label></td><td id="integral"></td>
         </tr>
     </table>
 </div>
+<script>
+    loader.getUserinfo().requestUserinfo({
+        success:function(userInfo){
+            $("#name").html(userInfo.name);
+            $("#phonenumber").html(userInfo.phonenumber);
+            $("#amount").html(userInfo.amount);
+            $("#subordinateNum").html(userInfo.subordinateNum);
+            $("#totalAmount").html(userInfo.totalAmount);
+            $("#orderNum").html(userInfo.orderNum);
+            $("#integral").html(userInfo.integral);
+        }
+    });
+</script>
