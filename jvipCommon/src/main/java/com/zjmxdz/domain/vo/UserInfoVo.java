@@ -11,7 +11,7 @@ public class UserInfoVo {
     private String username;
     private String phonenumber;
     private String name;
-    private String refereeUserId;
+    private String refereeAccount;
     private String refereeUserName;
     private BigDecimal amount;
     private BigDecimal totalAmount;
@@ -20,4 +20,6 @@ public class UserInfoVo {
     private Integer peas;
     private Integer subordinateNum;
     private Integer orderNum;
+
+    private List<GradleNumVo> gradleNums;
 }

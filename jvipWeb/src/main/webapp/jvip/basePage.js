@@ -133,6 +133,10 @@ class BasePage{
         this.doShowDialog(params);
     }
 
+    closeDialog(){
+        $(this.dialogParentSelector()).dialog("close");
+    }
+
     doShowDialog(params){
         var width = params.width;
         var height = params.height;
@@ -149,6 +153,7 @@ class BasePage{
             modal = false;
         }
         var url = this.url();
+
         var that = this;
 
         var onOpen = function(){

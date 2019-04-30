@@ -10,7 +10,9 @@ public class TbaseIntegralConfigVo {
 
     private Integer integral;
 
-    private BigDecimal amount;
-
     private Integer gradle;
+
+    private BigDecimal conditionLimitAmount;
+
+    private BigDecimal conditionMaxAmount;
 }

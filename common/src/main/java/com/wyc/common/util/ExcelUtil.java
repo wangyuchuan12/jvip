@@ -59,6 +59,7 @@ public class ExcelUtil {
                     Row xssfRow = sheet.getRow(i);
                     for (Map.Entry<Field, ExcelColumn> filedEntry : fieldMap.entrySet()) {
                         Field field = filedEntry.getKey();
+                        field.setAccessible(true);
                         ExcelColumn excelColumn = filedEntry.getValue();
                         int index = excelColumn.index();
                         Cell xssfCell = xssfRow.getCell(index);
@@ -84,7 +85,7 @@ public class ExcelUtil {
                     list.add(t);
                 }
             }catch (Exception e){
-
+                e.printStackTrace();
             }
         }
         return list;

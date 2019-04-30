@@ -25,6 +25,73 @@
         <tr>
             <td><label>积分:</label></td><td id="integral"></td>
         </tr>
+
+        <tr>
+            <td><label>等级:</label></td><td id="grade"></td>
+        </tr>
+
+        <tr>
+            <td><label>业务员:</label></td>
+            <td id="grade1Data">
+                满足条件：<span id="grade1DataCondition">300分</span><br/>
+                数量：<span id="grade1DataNum">0</span>
+                购买总额：<span id="grade1DataAmount">0</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td><label>业务主管:</label></td>
+            <td id="grade2Data">
+                满足条件：<span id="grade2DataCondition">600分</span><br/>
+                数量：<span id="grade2DataNum">0</span>
+                购买总额：<span id="grade2DataAmount">0</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td><label>副经理:</label></td>
+            <td id="grade3Data">
+                满足条件：<span id="grade3DataCondition">900分</span><br/>
+                数量：<span id="grade3DataNum">0</span>
+                购买总额：<span id="grade3DataAmount">0</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td><label>经理:</label></td>
+            <td id="grade4Data">
+                满足条件：<span id="grade4DataCondition">1200分</span><br/>
+                数量：<span id="grade4DataNum">0</span>
+                购买总额：<span id="grade4DataAmount">0</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td><label>大区副经理 :</label></td>
+            <td id="grade5Data">
+                满足条件：<span id="grade5DataCondition">1500分</span><br/>
+                数量：<span id="grade5DataNum">0</span>
+                购买总额：<span id="grade5DataAmount">0</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td><label>大区经理 :</label></td>
+            <td id="grade6Data">
+                满足条件：<span id="grade6DataCondition">1800分</span><br/>
+                数量：<span id="grade6DataNum">0</span>
+                购买总额：<span id="grade6DataAmount">0</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td><label>合伙人 :</label></td>
+            <td id="grade7Data">
+                满足条件：<span id="grade7DataCondition">2100分</span><br/>
+                数量：<span id="grade7DataNum">0</span>
+                购买总额：<span id="grade7DataAmount">0</span>
+            </td>
+        </tr>
     </table>
 </div>
 <script>
@@ -37,6 +104,29 @@
             $("#totalAmount").html(userInfo.totalAmount);
             $("#orderNum").html(userInfo.orderNum);
             $("#integral").html(userInfo.integral);
+            var gradle = userInfo.grade;
+            if(gradle==1){
+                $("#grade").html("业务员");
+            }else if(gradle==2){
+                $("#grade").html("业务主管");
+            }else if(gradle==3){
+                $("#grade").html("副经理");
+            }else if(gradle==4){
+                $("#grade").html("经理");
+            }else if(gradle==5){
+                $("#grade").html("大区副经理");
+            }else if(gradle==6){
+                $("#grade").html("大区经理");
+            }else if(gradle==7){
+                $("#grade").html("合伙人");
+            }
+
+            var gradleNums = userInfo.gradleNums;
+            for(var i = 0;i<gradleNums.length;i++){
+                var gradleNum = gradleNums[i];
+                $("#grade"+gradleNum.gradle+"DataNum").html(gradleNum.num);
+                $("#grade"+gradleNum.gradle+"DataAmount").html(gradleNum.amount);
+            }
         }
     });
 </script>

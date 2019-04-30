@@ -15,6 +15,7 @@ import com.zjmxdz.service.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -142,7 +143,7 @@ public class MainApi {
     public Object flushIntegralConfig(@RequestBody List<TbaseIntegralConfigVo> tbaseIntegralConfigs)throws Exception{
         for(TbaseIntegralConfigVo tbaseIntegralConfigVo:tbaseIntegralConfigs){
             TbaseIntegralConfig tbaseIntegralConfig = tbaseIntegralConfigService.findOne(tbaseIntegralConfigVo.getId());
-            tbaseIntegralConfig.setAmount(tbaseIntegralConfigVo.getAmount());
+            //tbaseIntegralConfig.setAmount(tbaseIntegralConfigVo.getAmount());
             //tbaseIntegralConfig.setGradle(tbaseIntegralConfigVo.getGradle());
             tbaseIntegralConfig.setIntegral(tbaseIntegralConfigVo.getIntegral());
             tbaseIntegralConfigService.update(tbaseIntegralConfig);
@@ -322,7 +323,18 @@ public class MainApi {
     public Object orders(HttpServletRequest httpServletRequest){
         Client client = UserContext.get();
         TbaseUserinfo userInfo = tbaseUserinfoService.findOne(client.getUserId());
-        return tappImportTaskService.findAllOrders(userInfo.getUsername(),0,100);
+        Integer role = 0;
+        if(CommonUtil.isNotEmpty(userInfo.getRole())){
+            role = userInfo.getRole();
+        }
+
+        if(role.intValue()==1){
+            StringBuffer sb = new StringBuffer();
+            sb.append("select order_id as id,order_name as name,order_amount as amount,order_account as account from tapp_order  limit 0 ,100");
+            return tappOrderService.findAll(OrderVo.class,sb.toString());
+        }else {
+            return tappImportTaskService.findAllOrders(userInfo.getUsername(), 0, 100);
+        }
     }
 
 
@@ -359,11 +371,63 @@ public class MainApi {
     @ResponseBody
     public Object userinfoSubordinate(HttpServletRequest httpServletRequest){
         Client client = UserContext.get();
+        TbaseUserinfo userInfo = tbaseUserinfoService.findOne(client.getUserId());
+        Integer role = 0;
+        if(CommonUtil.isNotEmpty(userInfo.getRole())){
+            role = userInfo.getRole();
+        }
+
         List<SubordinateVo> subordinates = tappSubordinateService.subordinates(client.getUserId());
         Map<String,Object> response = new HashMap<>();
         response.put("success",true);
         response.put("data",subordinates);
         return response;
+
+    }
+
+
+    @RequestMapping("userinfos")
+    @ResponseBody
+    public Object userinfos(HttpServletRequest httpServletRequest){
+        String name = httpServletRequest.getParameter("name");
+        String phonenumber = httpServletRequest.getParameter("phonenumber");
+        String size = httpServletRequest.getParameter("size");
+        String page = httpServletRequest.getParameter("page");
+
+        Integer sizeInt = 0;
+        Integer pageInt = 100;
+
+        if(CommonUtil.isNotEmpty(size)){
+            sizeInt = Integer.valueOf(size);
+        }
+
+        if(CommonUtil.isNotEmpty(page)){
+            pageInt = Integer.valueOf(page);
+        }
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC,"userinfo_id"));
+        Pageable pageable = new PageRequest(pageInt,sizeInt);
+        if(CommonUtil.isEmpty(name)&&CommonUtil.isEmpty(phonenumber)){
+            Page data = tbaseUserinfoService.findAll(pageable);
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",data);
+            return response;
+        }else {
+            TbaseUserinfoDto tbaseUserinfoDto = new TbaseUserinfoDto();
+            if(CommonUtil.isNotEmpty(name)) {
+                tbaseUserinfoDto.setName(name);
+            }
+
+            if(CommonUtil.isNotEmpty(phonenumber)){
+                tbaseUserinfoDto.setPhonenumber(phonenumber);
+            }
+            Page data =  tbaseUserinfoService.findAll(tbaseUserinfoDto,pageable);
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",data);
+            return response;
+        }
+
     }
 
     @RequestMapping("updatePassword")
@@ -371,10 +435,8 @@ public class MainApi {
     public Object updatePassword(HttpServletRequest httpServletRequest){
         String newPassword = httpServletRequest.getParameter("new_password");
         String oldPassword = httpServletRequest.getParameter("old_password");
-        String account = httpServletRequest.getParameter("account");
-        TbaseUserinfoDto tbaseUserinfoDto = new TbaseUserinfoDto();
-        tbaseUserinfoDto.setUsername(account);
-        TbaseUserinfo tbaseUserinfo = tbaseUserinfoService.findOne(tbaseUserinfoDto);
+        Client client = UserContext.get();
+        TbaseUserinfo tbaseUserinfo = tbaseUserinfoService.findOne(client.getUserId());
         if(CommonUtil.isEmpty(tbaseUserinfo)){
             Map<String,Object> data = new HashMap<>();
             data.put("success",false);

@@ -94,13 +94,18 @@ class Menu
 				imgStyle:"left:3px;"
 			});
 
-			menus.push({
-				name:"任务",
-				url:"",
-				loadTarget:"taskList",
-				iconUrl:"image/task.png",
-				imgStyle:"left:3px;"
-			});
+			var role = loader.getConfig().getRole();
+
+			if(role==1){
+				menus.push({
+					name:"任务",
+					url:"",
+					loadTarget:"taskList",
+					iconUrl:"image/task.png",
+					imgStyle:"left:3px;"
+				});
+			}
+
 
 			this.menus = menus;
 

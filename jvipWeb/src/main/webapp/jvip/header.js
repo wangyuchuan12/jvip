@@ -11,6 +11,16 @@ class Header{
         loader.getSetup().showDialog();
     }
 
+    doUpdatePassword(){
+        loader.getUpdatePassword().showDialog({
+            onOpen:function(){
+
+            },
+            onClose:function(){
+
+            }
+        });
+    }
 
 
     init(params){

@@ -18,7 +18,7 @@ class TaskUserinfoDetail extends BasePage{
     loadData(resourceId,type,callback){
         this.resourceId = resourceId;
         this.type = type;
-        this.params.loadData();
+        this.params.doLoadData();
         this.callback = callback;
     }
 

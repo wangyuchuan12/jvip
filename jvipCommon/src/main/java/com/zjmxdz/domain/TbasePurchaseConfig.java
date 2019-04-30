@@ -31,13 +31,13 @@ public class TbasePurchaseConfig {
 
     //金额范围，最小额度
     @Column(name = "pconfig_condition_limitamount")
-    @Conditions(@Condition(properties="CONDITION_LIMIT_AMOUNT",type= Part.Type.LESS_THAN))
+    @Conditions(@Condition(properties="CONDITION_LIMIT_AMOUNT",type= Part.Type.LESS_THAN_EQUAL))
     private BigDecimal conditionLimitAmount;
 
 
     //金额范围，最大额度
     @Column(name = "pconfig_condition_maxamount")
-    @Conditions(@Condition(properties="CONDITION_MAX_AMOUNT",type= Part.Type.GREATER_THAN_EQUAL))
+    @Conditions(@Condition(properties="CONDITION_MAX_AMOUNT",type= Part.Type.GREATER_THAN))
     private BigDecimal conditionMaxAmount;
 
     //奖励豆子

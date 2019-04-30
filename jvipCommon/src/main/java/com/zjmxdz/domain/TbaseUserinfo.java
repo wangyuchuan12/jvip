@@ -31,6 +31,7 @@ public class TbaseUserinfo implements Serializable {
     private String username;
     //手机号码
     @Column(name = "userinfo_phonenumber")
+    @Condition
     private String phonenumber;
 
     //总共购买金额
@@ -70,6 +71,11 @@ public class TbaseUserinfo implements Serializable {
     @Column(name = "userinfo_ishierarchy")
     @Condition
     private Integer isHierarchy;
+
+    //角色
+    @Column(name = "userinfo_role")
+    @Condition
+    private Integer role;
 
     @Column(name = "update_at")
     @UpdateAt

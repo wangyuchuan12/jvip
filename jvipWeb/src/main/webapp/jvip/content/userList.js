@@ -25,15 +25,20 @@ class UserList extends BasePage{
         loader.getBase().setMode("userList");
     }
 
-    userList(callback){
+    userList(params,callback){
         var base = loader.getBase();
         base.request({
-            url:"/api/subordinate",
-            data:{
-
-            },
+            url:"/api/userinfos",
+            data:params,
             success:function(result){
-                callback.success(result);
+                if(result.success){
+                    callback.success(result.data);
+                }else{
+                    callback.fail();
+                }
+            },
+            error:function(){
+                callback.error();
             }
         });
     }

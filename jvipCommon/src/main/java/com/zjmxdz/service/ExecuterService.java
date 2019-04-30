@@ -2,10 +2,12 @@ package com.zjmxdz.service;
 
 import com.wyc.common.util.CommonUtil;
 import com.wyc.common.util.ExcelUtil;
+import com.zjmxdz.dao.TbaseIntegralConfigDao;
 import com.zjmxdz.domain.*;
 import com.zjmxdz.domain.dto.*;
 import com.zjmxdz.domain.vo.ImportOrderData;
 import com.zjmxdz.domain.vo.ImportUserData;
+import com.zjmxdz.domain.vo.TbaseIntegralConfigVo;
 import com.zjmxdz.exception.UserInfoNullException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class ExecuterService {
     @Autowired
     private TbaseGradeConfigService tbaseGradeConfigService;
 
+    @Autowired
+    private TbaseIntegralConfigService tbaseIntegralConfigService;
+
     @Value("${userFileDir}")
     private String userFileDir;
 
@@ -68,7 +73,7 @@ public class ExecuterService {
     public void countGrade(TbaseUserinfo tbaseUserinfo){
         TbaseGradeConfig tbaseGradeConfig = tbaseGradeConfigService.getMaxByIntegral(tbaseUserinfo.getIntegral());
         if(CommonUtil.isNotEmpty(tbaseGradeConfig)){
-            Integer grade = tbaseUserinfo.getGrade();
+            Integer grade = tbaseGradeConfig.getGrade();
             tbaseUserinfo.setGrade(grade);
             try {
                 tbaseUserinfoService.update(tbaseUserinfo);
@@ -76,11 +81,36 @@ public class ExecuterService {
                 e.printStackTrace();
             }
         }
+    }
 
+    public void countBuyReward(TappOrder tappOrder)throws Exception{
+        TbaseUserinfoDto userinfoDto = new TbaseUserinfoDto();
+        userinfoDto.setUsername(tappOrder.getAccount());
+        TbaseUserinfo tbaseUserinfo = tbaseUserinfoService.findOne(userinfoDto);
+        TbaseIntegralConfigDto tbaseIntegralConfigDto = new TbaseIntegralConfigDto();
+        tbaseIntegralConfigDto.setCONDITION_LIMIT_AMOUNT(tappOrder.getAmount());
+        tbaseIntegralConfigDto.setCONDITION_MAX_AMOUNT(tappOrder.getAmount());
+        TbaseIntegralConfig tbaseIntegralConfig = tbaseIntegralConfigService.findOne(tbaseIntegralConfigDto);
+        if(CommonUtil.isNotEmpty(tbaseIntegralConfig)){
+
+            Long integral = tbaseUserinfo.getIntegral();
+
+            if(CommonUtil.isEmpty(integral)){
+                integral = 0l;
+            }
+
+            if(CommonUtil.isNotEmpty(tbaseIntegralConfig.getIntegral())){
+                integral = integral+tbaseIntegralConfig.getIntegral();
+            }
+
+            tbaseUserinfo.setIntegral(integral);
+
+            tbaseUserinfoService.update(tbaseUserinfo);
+        }
     }
 
 
-    public void countReward(TappOrder tappOrder)throws UserInfoNullException{
+    public void countOrderReward(TappOrder tappOrder)throws UserInfoNullException{
 
         String account = tappOrder.getAccount();
         String refereeAccount = tappOrder.getRefereeAccount();
@@ -288,10 +318,11 @@ public class ExecuterService {
                 tbaseUserinfo.setUsername(importUserData.getAccount());
                 tbaseUserinfo.setRefereeAccount(importUserData.getReferencesAccount());
                 tbaseUserinfo.setAmount(new BigDecimal(0));
+                tbaseUserinfo.setTotalAmount(new BigDecimal(0));
                 tbaseUserinfo.setName(importUserData.getName());
                 tbaseUserinfo.setIntegral(0L);
                 tbaseUserinfo.setInvitationnum(0);
-                tbaseUserinfo.setGrade(0);
+                tbaseUserinfo.setGrade(1);
                 tbaseUserinfo.setPeas(0);
                 tbaseUserinfo.setIsHierarchy(0);
                 tbaseUserinfo.setPassword("1234567");
@@ -325,12 +356,14 @@ public class ExecuterService {
             tappOrder.setTaskId(importTask.getId());;
             tappOrderService.add(tappOrder);
             try {
-                countReward(tappOrder);
+                countOrderReward(tappOrder);
+                countBuyReward(tappOrder);
                 tappOrder.setStatus(1);
             }catch (UserInfoNullException e){
                 tappOrder.setStatus(2);
                 tappOrder.setErrortype(0);
                 tappOrder.setRemarks("没有导入用户");
+                throw e;
             }
 
             tappOrderService.update(tappOrder);

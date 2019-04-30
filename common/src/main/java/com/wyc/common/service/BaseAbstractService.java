@@ -10,6 +10,8 @@ import ir.nymph.date.DateTime;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -285,14 +287,19 @@ abstract public class BaseAbstractService<T> {
     }
 
     public List<T> findAll(T t){
-        return findAll(t,null);
+
+        return findAll(t,null).getContent();
     }
 
     public List<T> findAll(){
         return getJpaRepository().findAll();
     }
 
-    public List<T> findAll(T t, Pageable pageable){
+    public Page<T> findAll(Pageable pageable){
+        return getJpaRepository().findAll(pageable);
+    }
+
+    public Page<T> findAll(T t, Pageable pageable){
 
         try {
             TableVo tableVo = table(t);
@@ -302,6 +309,7 @@ abstract public class BaseAbstractService<T> {
 
             for (SelectPropertyVo selectProperty : tableVo.getSelectPropertys()) {
                 sb.append(selectProperty.column);
+                sb.append(" as "+selectProperty.name);
                 sb.append(",");
             }
 
@@ -345,6 +353,8 @@ abstract public class BaseAbstractService<T> {
 
             }
 
+
+
             List<Map<String, Object>> list = JdbcUtils.executeQuery(dataSource, sb.toString());
 
             List<SelectPropertyVo> selectPropertys = selectPropertys();
@@ -374,12 +384,33 @@ abstract public class BaseAbstractService<T> {
                 results.add(target);
 
             }
-            return results;
+
+            StringBuffer countBuffer = new StringBuffer();
+
+            countBuffer.append("select count(*)");
+
+            countBuffer.append(" from ");
+            countBuffer.append(tableVo.getTable());
+            countBuffer.append(" where ");
+
+            int countIndex = 0;
+            for (ConditionVo conditionVo : tableVo.getConditions()) {
+                countIndex++;
+                countBuffer.append(conditionSql(conditionVo) + " ");
+                if (countIndex < tableVo.getConditions().size()) {
+                    countBuffer.append("and ");
+                }
+            }
+
+            Object count = getValue(countBuffer.toString());
+
+            PageImpl page = new PageImpl(results,pageable,Long.valueOf(count.toString()));
+            return page;
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return  null;
+        return  new PageImpl(new ArrayList());
     }
 
     public String conditionSql(ConditionVo condition){

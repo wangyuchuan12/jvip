@@ -1,7 +1,7 @@
 <script type="text/javascript" src="jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
 <div id="userList" style="width:100%;height:100%;" >
     <div style="width:100%;height:100%;">
-        <table  style="width:100%;height:100%;" class="" id="userGrid">
+        <table  style="width:100%;height:100%;" class="" toolbar="#searchUserlist" id="userGrid">
             <thead>
             <tr>
                 
@@ -9,22 +9,28 @@
             </thead>
         </table>
 
-        <div id="pp2" style="background:#efefef;border:1px solid #ccc;"></div>
+        <div id="pp" style="background:#efefef;border:1px solid #ccc;"></div>
     </div>
+
+
+    <form id="searchUserlist" style="padding:3px">
+        <span>名字:</span>
+        <input class="easyui-textbox" id="name" style="line-height:26px;border:1px solid #ccc">
+        <span>电话号码:</span>
+        <input class="easyui-textbox" id="phonenumber" style="line-height:26px;border:1px solid #ccc">
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="flushData()" id="search">查询</a>
+    </form>
 
 </div>
 
 <script>
     var columns = [[
-        {field:'subordinateUsername',title:'名称',width:'10%',align:'center',sortorder:'asc',sortable:"true"},
-        {field:'subordinatephonenumber',title:'手机号码',align:'center',width:'10%',sortable:false},
-        {field:'level',title:'深度',align:'center',width:'10%',sortable:true},
-        {field:'refereeName',title:'邀请人',width:'10%',align:'center',sortable:true},
-        {field:'subordinatGrade',title:'等级',width:'10%',align:'center',sortable:true},
-        {field:'subordinateintegral',title:'积分',width:'10%',align:'center',sortable:true},
-        {field:'invitationnum',title:'邀请人数',width:'10%',align:'center',sortable:true},
-        {field:'totalAmount',title:'购买总额',width:'10%',align:'center',sortable:true},
-        {field:'amount',title:'余额',width:'10%',align:'center',sortable:true}
+        {field:'name',title:'名称',width:'15%',align:'center',sortorder:'asc',sortable:"true"},
+        {field:'phonenumber',title:'手机号码',align:'center',width:'15%',sortable:false},
+        {field:'grade',title:'等级',width:'15%',align:'center',sortable:true},
+        {field:'integral',title:'积分',width:'15%',align:'center',sortable:true},
+        {field:'totalAmount',title:'购买总额',width:'15%',align:'center',sortable:true},
+        {field:'amount',title:'余额',width:'15%',align:'center',sortable:true}
     ]]
 
     showUserlistGrid(null);
@@ -38,18 +44,65 @@
             rownumbers:true,
             columns:columns,
             data:data,
+            height:"90%",
             onClickRow:function(index,row){
 
             }
         });
     }
 
-    function flushData(){
-        loader.getUserList().userList({
+    function flushData(page,size){
+        if(!page){
+            page =0;
+        }
+
+        if(!size){
+            size = 100;
+        }
+        var name = $("#name").textbox("getValue");
+        var phonenumber = $("#phonenumber").textbox("getValue");
+        var params = {
+            page:page,
+            size:size,
+            name:name,
+            phonenumber:phonenumber
+        }
+        loader.getUserList().userList(params,{
             success:function(data){
-                showUserlistGrid(data.data);
+                showUserlistGrid(data.content);
+                initPage(data.size,data.number+1,data.totalElements);
+            },
+            fail:function(){
+
+            },
+            error:function(){
+
             }
         })
+    }
+
+    function initPage(size,number,totalElements){
+        $('#pp').pagination({
+            pageSize: size,
+            total:totalElements,
+            pageNumber:number,
+            pageList:[size],
+            beforePageText: '第',
+            afterPageText:'共{pages}页',
+            displayMsg: '当前显示 {from} 到 {to} ,共{total}记录',
+            onBeforeRefresh: function () {
+
+            },
+            onRefresh: function (pageNumber, pageSize) {
+
+            },
+            onChangePageSize: function () {
+
+            },
+            onSelectPage: function (pageNumber, pageSize) {
+                flushData(pageNumber-1,pageSize);
+            }
+        });
     }
 
 

@@ -1,13 +1,14 @@
 <div class="headerContent">
     <div style="width:80%;left:0px;height:50px;-webkit-app-region: drag;background:rgba(1,1,1,0);z-index:0;position:absolute;"></div>
     <img src="logo.svg">
-    <span>诺客智能客服</span>
+    <span>会员查询系统</span>
     <div class="headerContentUser" style="position: fixed;z-index: 1;right:20px;top:20px;">
         <a href="javascript:void(0)" id="mb" class="easyui-menubutton"
     data-options="menu:'#mm',iconCls:'icon-man'" style="color:black;">你好，<span id="username"></span></a>
         <div id="mm" style="width:150px;">
-            <div data-options="iconCls:'icon-tip'" onclick="setup()">设置</div>
+            <div data-options="iconCls:'icon-tip'" onclick="setup()" id="setupButton">设置</div>
             <div data-options="iconCls:'icon-back'" onclick="loginOut()">退出登录</div>
+            <div data-options="iconCls:'icon-edit'" onclick="updatePassword()">修改密码</div>
         </div>
 
     </div>
@@ -17,7 +18,15 @@
     loader.getHeader().init({
         render:function(){
             $("#username").text(loader.getBasicInfo().getUsername());
+            var role = loader.getConfig().getRole();
+            if(role==1){
+                $("#setupButton").css("display","block");
+            }else{
+                $("#setupButton").css("display","none");
+            }
         }
+
+
 
     });
 
@@ -31,6 +40,10 @@
 
     function loginOut(){
         loader.getHeader().doLoginout();
+    }
+
+    function updatePassword(){
+        loader.getHeader().doUpdatePassword();
     }
     
 </script>

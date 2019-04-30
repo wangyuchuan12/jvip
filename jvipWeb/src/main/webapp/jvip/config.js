@@ -14,7 +14,7 @@ class Config
 			return;
 		}catch(ex){
 			this.config={
-				"baseUrl":"http://www.chengxihome.com:8081",
+				"baseUrl":"http://localhost:8085",
 				"waitIconUrl":"etc/wait.png",
 				"socketPath":"ws://www.chengxihome.com:9999/ws",
 				"localSocketPath":"/ws",
@@ -151,6 +151,14 @@ class Config
 
 	getTrayMode(){
 		return this.config.trayMode;
+	}
+
+	setRole(role){
+		this.config.role = role;
+	}
+
+	getRole(){
+		return this.config.role;
 	}
 
 	getWaitIconUrl(){

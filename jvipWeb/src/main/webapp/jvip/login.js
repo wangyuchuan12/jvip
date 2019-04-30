@@ -21,20 +21,7 @@ class Login
 	}
 
 	doLoginout(){
-		var that = this;
-		var base = loader.getBase();
-		var params = {
-			url:"/usercenter/logout",
-			data:{
-				
-			},
-			success:function(result){
-				loader.getConfig().setPassword("");
-				loader.getBase().reload();
-			}
-		};
-
-		base.request(params);
+		window.location.reload();
 	}
 
 	showTray(){
@@ -78,6 +65,12 @@ class Login
 			},
 			success:function(result){
 				if(result.success){
+					loader.getConfig().setToken(result.token);
+					loader.getConfig().setLoginName(identity);
+					loader.getConfig().setPassword(password);
+					loader.getBasicInfo().setUsername(result.data.name);
+					loader.getConfig().setRole(result.data.role);
+
 					loader.loadMenu();
 					loader.loadHeader();
 					loader.resizeWindow(1100,800);
@@ -90,10 +83,7 @@ class Login
 					loader.getMenu().receiveReminder("searchProblem");
 					//loader.getBase().startRemindTray();
 					callback.success();
-					loader.getConfig().setToken(result.token);
-					loader.getConfig().setLoginName(identity);
-					loader.getConfig().setPassword(password);
-					loader.getBasicInfo().setUsername(result.data.name);
+
 				}else{
 					callback.fail();
 				}

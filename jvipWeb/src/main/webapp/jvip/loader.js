@@ -199,6 +199,14 @@ class Loader
 		return this.setup;
 	}
 
+	getUpdatePassword(){
+		if(!this.updatePassword){
+			var updatePassword = new UpdatePassword();
+			this.updatePassword = updatePassword;
+		}
+		return this.updatePassword;
+	}
+
 	loadTaskUpload(){
 		this.getTaskUpload().showView();
 	}

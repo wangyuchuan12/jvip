@@ -27,13 +27,20 @@ public class TbaseIntegralConfig {
     @Column(name = "integralconfig_integral")
     private Integer integral;
 
-    @Column(name = "integralconfig_amount")
-    @Conditions(@Condition(properties="CONDITION_LIMIT_AMOUNT",type= Part.Type.LESS_THAN))
-    private BigDecimal amount;
+    //金额范围，最小额度
+    @Column(name = "integralconfig_condition_limitamount")
+    @Conditions(@Condition(properties="CONDITION_LIMIT_AMOUNT",type= Part.Type.LESS_THAN_EQUAL))
+    private BigDecimal conditionLimitAmount;
+
+
+    //金额范围，最大额度
+    @Column(name = "integralconfig_condition_maxamount")
+    @Conditions(@Condition(properties="CONDITION_MAX_AMOUNT",type= Part.Type.GREATER_THAN))
+    private BigDecimal conditionMaxAmount;
 
     @Column(name = "integralconfig_gradle")
-    @Conditions(@Condition(properties="CONDITION_MAX_AMOUNT",type= Part.Type.GREATER_THAN_EQUAL))
     private Integer gradle;
+
 
     @Column(name = "update_at")
     @UpdateAt

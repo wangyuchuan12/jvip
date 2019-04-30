@@ -28,6 +28,7 @@ class Setup extends BasePage{
     }
 
     showDialog(callback){
+        this.title = "设置配置信息";
         super.showDialog();
         this.callback = callback;
     }

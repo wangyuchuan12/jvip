@@ -77,7 +77,7 @@
 
                 loader.getSetup().submitPurchaseConfig(list,{
                     success:function(data){
-                        alert("完成了");
+                        loader.getSetup().closeDialog();
                     }
                 });
 
@@ -154,11 +154,11 @@
 
         getIntegralColumns:function(){
             var columns = [[
-                {field:'id',title:'id',width:'33%',align:'center',sortorder:'asc',sortable:"true"},
-                {field:'amount',title:'金额',width:'33%',align:'center',sortorder:'asc',sortable:"true",formatter:function(grade,record){
-                        return grade;
-                    }},
-                {field:'integral',title:'积分',width:'33%',align:'center',sortorder:'asc',sortable:"true",formatter:function(integral,record){
+                {field:'id',title:'id',width:'25%',align:'center',sortorder:'asc',sortable:"true"},
+                {field:'conditionLimitAmount',title:'金额',width:'25%',align:'center',sortorder:'asc',sortable:"true",formatter:function(conditionLimitAmount,record){
+                        return conditionLimitAmount;
+                }},
+                {field:'integral',title:'积分',width:'25%',align:'center',sortorder:'asc',sortable:"true",formatter:function(integral,record){
                         return "<input class='easyui-textbox' value='"+integral+"' type='number' name='integral_integral' id='"+record.id+"' amount='"+record.amount+"'></input>";
                  }}
             ]]
@@ -183,6 +183,7 @@
                 rownumbers:true,
                 columns:columns,
                 toolbar:[],
+                height:300,
                 onClickRow:function(index,row){
 
                 }
